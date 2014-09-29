@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # DellySomaticFreqFilter.py
 from __future__ import print_function
+sys.path.append(os.path.join(os.path.dirname(__file__), "py"))
 import argparse
 import numpy
 import re
@@ -103,8 +104,8 @@ parser.add_argument('-v', '--vcf', metavar='variants.vcf', required=True, dest='
 #parser.add_argument('-t', '--type', metavar='DEL', required=True, dest='svType', help='SV type [DEL, DUP, INV, INS] (required)')
 parser.add_argument('-o', '--out', metavar='out.vcf', required=False, dest='outFile', help='output vcf file. Default suffix ".highConf.vcf" (optional)')
 parser.add_argument('-s', '--sample', metavar='PRAD', required=False, dest='tumorType', help='tumor sample type [PRAD, BLCA, MB...] (default PRAD)')
-parser.add_argument('-a', '--altaf', metavar='0.25', required=False, dest='altAF', help='min. alt. AF (optional)')
-parser.add_argument('-m', '--minsize', metavar='500', required=False, dest='minSize', help='min. size (optional)')
+parser.add_argument('-a', '--altaf', metavar='0.25', required=False, dest='altAF', help='min. alt. AF (default 0)')
+parser.add_argument('-m', '--minsize', metavar='100', required=False, dest='minSize', help='min. size (default 100)')
 parser.add_argument('-n', '--maxsize', metavar='500000000', required=False, dest='maxSize', help='max. size (optional)')
 parser.add_argument('-p', '--tumorpairs', metavar='2', required=False, dest='suppPairs', help='min number of supporing pairs in tumor for high confident filter (default 4)')
 parser.add_argument('-f', '--filter', dest='siteFilter', action='store_true', help='Filter sites for PASS')
@@ -147,16 +148,12 @@ svDups = collections.defaultdict(list)
 validRecordID = set()
 validGermRecordID = set()
 if vcfFile:
-    vcf_reader = vcf.Reader(filename = vcfFile)
-    # try:
-    #     vcf_reader = vcf.Reader(open(vcfFile, 'r'))
-    # except Exception, e:
-    #     vcf_reader = vcf.Reader(gzip.open(vcfFile, 'rb'))
+    vcf_reader = vcf.Reader(open(vcfFile), 'r', compressed=True) if vcfFile.endswith('.gz') else vcf.Reader(open(vcfFile), 'r', compressed=False)
     for record in vcf_reader:
         vcfInfo = record.INFO
         suppPairs = 2
         svType = re.sub(r'[0-9]*','',record.ID) 
-        listOfSamples = ', '.join(map(str, list(set([re.sub('SC_(([^_]*))_.*', '\\1', sc) for sc in record.INFO if 'SC_' in sc and '1KGP' not in sc]))))
+        listOfSamples = ', '.join(map(str, list(set([re.sub('SC_((.*))_[a-z]*_[CF]', '\\1', sc) for sc in record.INFO if 'SC_' in sc and '1KGP' not in sc]))))
         if [sc for sc in record.INFO if tumorType in sc]:
             tumorTypeCtrlFrq = 'SC_' + tumorType + '_control_F'
             tumorTypeCtrlCount = 'SC_' + tumorType + '_control_C'
@@ -203,6 +200,7 @@ if vcfFile:
                     elif len(record.samples) == 1: # If only one sample, assume that the sample is tumor
                         genoAlt = call['GT']
                         rcAlt = AltGeno(call, rcAlt)
+                        rcRef = rcAlt
                         callTum = call
             if (len(rcRef) > 0) and (len(rcAlt) > 0):
                 rdRatio = 1
@@ -237,11 +235,7 @@ if vcfFile:
 
 # Output vcf records
 if vcfFile:
-    vcf_reader = vcf.Reader(filename = vcfFile)
-    # try:
-    #     vcf_reader = vcf.Reader(open(vcfFile), 'rb')
-    # except Exception, e:
-    #     vcf_reader = vcf.Reader(gzip.open(vcfFile), 'rb')
+    vcf_reader=vcf.Reader(open(vcfFile), 'r', compressed=True) if vcfFile.endswith('.gz') else vcf.Reader(open(vcfFile), 'r', compressed=False)
     vcf_reader.infos['SOMATIC'] = vcf.parser._Info('SOMATIC', 0, 'Flag', 'Somatic structural variant.')
     vcf_reader.infos['GERMLINE'] = vcf.parser._Info('GERMLINE', 0, 'Flag', 'Germline structural variant.')
     vcf_writer = vcf.Writer(open(outFile, 'w'), vcf_reader, lineterminator='\n')
