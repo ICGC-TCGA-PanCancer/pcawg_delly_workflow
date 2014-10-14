@@ -1,4 +1,4 @@
-# DELLY Workflow for Pan Cancer of Whole Genome analysis (PCAWG)
+# DELLY Workflow for Pan Cancer Analysis of Whole Genomes (PCAWG)
 
 The workflow consists of two main workflows
 * *DELLY* variant calling
