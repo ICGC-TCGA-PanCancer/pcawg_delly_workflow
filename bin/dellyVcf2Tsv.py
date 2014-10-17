@@ -28,10 +28,10 @@ Options:
 
 
 from __future__ import print_function
+import sys,os
 sys.path.append(os.path.join(os.path.dirname(__file__), "py"))
 from docopt import docopt
 import vcf
-import sys
 import csv
 import re
 import gzip

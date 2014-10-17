@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # DellySomaticFreqFilter.py
 from __future__ import print_function
+import sys,os
 sys.path.append(os.path.join(os.path.dirname(__file__), "py"))
 import argparse
 import numpy
@@ -8,7 +9,6 @@ import re
 import collections
 import copy
 import vcf
-import sys
 import gzip
 
 

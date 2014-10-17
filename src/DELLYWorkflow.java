@@ -16,7 +16,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
     private String cov_plot;
     private String gcnorm_r;
     private String rscript_bin;
+
+    private String prepare_uploader_bin;
     private String uploader_bin;
+    private String cleanup_bin;
+
     private String somatic_filter;
     private String delly2bed;
 
@@ -64,7 +68,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
       cov_plot = getProperty("cov_plot");
       gcnorm_r = getProperty("gcnorm_r");
       rscript_bin = getProperty("rscript_bin");
+      prepare_uploader_bin = getProperty("prepare_uploader_bin");
       uploader_bin = getProperty("uploader_bin");
+
+      cleanup_bin = getProperty("cleanup_bin");
+
       somatic_filter = getProperty("somatic_filter");
       delly2bed = getProperty("delly2bed");
 
@@ -416,14 +424,27 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         covJobPlot.addParent(covJobTumor3);
 
 
-        
-        //TODO
         //check and upload results
-        Job uploadJob = this.getWorkflow().createBashJob("upload_job");
-        uploadJob.getCommand().addArgument(uploader_bin  + " " + resultsDirRoot + " " + samplePair);
-        uploadJob.addParent(covJobPlot);
+        Job prepareUploadJob = this.getWorkflow().createBashJob("prepare_upload_job");
+        prepareUploadJob.getCommand().addArgument(prepare_uploader_bin  + " " + resultsDirRoot + " " + samplePair);
+        prepareUploadJob.addParent(covJobPlot);
 
+        Job uploadJob = this.getWorkflow().createBashJob("upload_job");
+        uploadJob.getCommand().addArgument("/usr/bin/perl " + uploader_bin)
+            .addArgument("--metadata-urls " +  samplePair)
+            .addArgument("--vcfs " + samplePair )
+            .addArgument("--vcf-md5sum-files " )
+            .addArgument("--vcf-idxs " );
+        uploadJob.addParent(prepare_uploader_job);
+
+        //TODO
         //cleanup data downloaded + created
+
+        Job cleanupJob = this.getWorkflow().createBashJob("cleanup_job");
+        cleanupJob.getCommand().addArgument(_bin  + " " + resultsDirRoot + " " + inputBamPathGerm + " " + inputBamPathTumor);
+        cleanupJob.addParent(upload_job);
+
+        
         
     }
 }
