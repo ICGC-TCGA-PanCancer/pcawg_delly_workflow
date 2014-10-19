@@ -1,0 +1,8 @@
+#!/g/software/linux/sepp/sbin/perl
+BEGIN{$Pack='vcftools-0.1.7';
+unshift @INC, '/g/software/linux/sepp/sbin';}
+use SeppStart;
+$s = "$PackDir/SEPP/start.pl";
+die "SEPP Error: Can't access $s\n" unless -x $s;
+do $s;
+die "SEPP Error: $@\n" if $@;
