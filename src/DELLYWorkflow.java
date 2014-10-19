@@ -7,6 +7,9 @@ import java.util.logging.Logger;
 import net.sourceforge.seqware.pipeline.workflowV2.AbstractWorkflowDataModel;
 import net.sourceforge.seqware.pipeline.workflowV2.model.Job;
 import net.sourceforge.seqware.pipeline.workflowV2.model.SqwFile;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
@@ -35,7 +38,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
     private String resultsDirCov = "results/cov";
     private String resultsDirCovPlot = "results/cov/plot";
 
-
+    String workflowID = null;
     String inputBamPathTumor = null;
     String inputBamPathGerm = null;  
 
@@ -43,6 +46,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
     String gnosInputFileURLTumor = null;
     String gnosInputFileURLGerm = null;
     String gnosUploadFileURL = null;
+    String gnosUploadFileDir = null;
     String gnosKey = null;
 
 
@@ -61,7 +65,10 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
       gnosInputFileURLGerm = getProperty("gnos_input_file_url_germ");
 
       //      gnosUploadFileURL = getProperty("gnos_output_file_url");
+      //    gnosUploadFileDir = getProperty("gnos_output_file_dir");
       gnosKey = getProperty("gnos_key");
+
+      workflowID = getProperty("delly_workflowID")
 
       delly_bin = getProperty("delly_bin");
       cov_bin = getProperty("cov_bin");
@@ -163,24 +170,28 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String outputFileDelly=resultsDirDelly + "/" + samplePair + ".deletions";
         String outputFileDellyFilter=resultsDirDelly + "/" + samplePair + ".deletions.somatic";
         String outputFileDellyFilterConf=resultsDirDelly + "/" + samplePair + ".deletions.somatic.highConf";
+        String outputFileDellyFilterConfGerm=resultsDirDelly + "/" + samplePair + ".deletions.germline.highConf";
         String outputFileDellyDump=resultsDirDelly + "/" + samplePair + ".deletions.pe_dump.txt";
 
         String logFileDuppy=resultsDirDuppy + "/" + samplePair + ".duplications.log";
         String outputFileDuppy=resultsDirDuppy + "/" + samplePair + ".duplications";
         String outputFileDuppyFilter=resultsDirDuppy + "/" + samplePair + ".duplications.somatic";
         String outputFileDuppyFilterConf=resultsDirDuppy + "/" + samplePair + ".duplications.somatic.highConf";
+        String outputFileDuppyFilterConfGerm=resultsDirDuppy + "/" + samplePair + ".duplications.germline.highConf";
         String outputFileDuppyDump=resultsDirDuppy + "/" + samplePair + ".duplications.pe_dump.txt";
 
         String logFileInvy=resultsDirInvy + "/" + samplePair + ".inversions.log";
         String outputFileInvy=resultsDirInvy + "/" + samplePair + ".inversions";
         String outputFileInvyFilter=resultsDirInvy + "/" + samplePair + ".inversions.somatic";
         String outputFileInvyFilterConf=resultsDirInvy + "/" + samplePair + ".inversions.somatic.highConf";
+        String outputFileInvyFilterConfGerm=resultsDirInvy + "/" + samplePair + ".inversions.germline.highConf";
         String outputFileInvyDump=resultsDirInvy + "/" + samplePair + ".inversions.pe_dump.txt";
 
         String logFileJumpy=resultsDirJumpy + "/" + samplePair + ".translocations.log";
         String outputFileJumpy=resultsDirJumpy + "/" + samplePair + ".translocations";
         String outputFileJumpyFilter=resultsDirJumpy + "/" + samplePair + ".translocations.somatic";
         String outputFileJumpyFilterConf=resultsDirJumpy + "/" + samplePair + ".translocations.somatic.highConf";
+        String outputFileJumpyFilterConfGerm=resultsDirJumpy + "/" + samplePair + ".translocations.germline.highConf";
         String outputFileJumpyDump=resultsDirJumpy + "/" + samplePair + ".translocations.pe_dump.txt";
 
         String outputFileCovGerm1=resultsDirCov + "/" + germName[0] + "_1kb.cov";
@@ -425,20 +436,55 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
         //check and upload results
-        Job prepareUploadJob = this.getWorkflow().createBashJob("prepare_upload_job");
-        prepareUploadJob.getCommand().addArgument(prepare_uploader_bin  + " " + resultsDirRoot + " " + samplePair);
-        prepareUploadJob.addParent(covJobPlot);
+        String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String delly_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz"
+        String delly_bedpe_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt"
+        String cov_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".cov"
+        String delly_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz"
+        String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt"
+
+        Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
+        prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " " + resultsDirCov);
+        prepareUploadJobSomatic.addParent(covJobPlot);
+
+        Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
+        prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin  + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf");
+        prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
         Job uploadJob = this.getWorkflow().createBashJob("upload_job");
         uploadJob.getCommand().addArgument("/usr/bin/perl " + uploader_bin)
-            .addArgument("--metadata-urls " +  samplePair)
-            .addArgument("--vcfs " + samplePair )
-            .addArgument("--vcf-md5sum-files " )
-            .addArgument("--vcf-idxs " );
-        uploadJob.addParent(prepare_uploader_job);
+            .addArgument("--metadata-urls " + samplePair)
+            .addArgument("--vcfs " + delly_somatic + ", " + delly_germline)
+            .addArgument("--vcf-md5sum-files " + delly_somatic + ".md5" + ", " + delly_germline + ".md5")
+            .addArgument("--vcf-idxs " + delly_somatic + ".tbi" + ", " + delly_germline + ".tbi")
+            .addArgument("vcf-idx-md5sum-files " + delly_somatic + ".tbi.md5" + ", " + delly_germline + ".tbi.md5")
+            .addArgument("--tarballs " + delly_bedpe_somatic  + ".tar.gz" + " " + delly_bedpe_germline  + ".tar.gz" + " "  + cov_somatic + ".tar.gz")
+            .addArgument("--tarball-md5sum-files " + delly_bedpe_somatic  + ".tar.gz.md5" + " " + delly_bedpe_germline  + ".tar.gz.md5" + " "  + cov_somatic + ".tar.gz.md5")
+            .addArgument("--outdir " + gnosUploadFileDir)
+            .addArgument("--key " + gnosKey)
+            .addArgument("--upload-url " + gnosUploadFileURL);
+           // .addArgument([--workflow-src-url <http://... the source repo>])
+           // .addArgument([--workflow-url <http://... the packaged SeqWare Zip>])
+           // .addArgument([--workflow-name <workflow_name>])
+           // .addArgument([--workflow-version <workflow_version>])
+           // .addArgument([--seqware-version <seqware_version_workflow_compiled_with>])
+           // .addArgument([--description-file <file_path_for_description_txt>])
+           // .addArgument([--study-refname-override <study_refname_override>])
+           // .addArgument([--analysis-center-override <analysis_center_override>])
+           // .addArgument([--pipeline-json <pipeline_json_file>])
+           // .addArgument([--qc-metrics-json <qc_metrics_json_file>])
+           // .addArgument([--timing-metrics-json <timing_metrics_json_file>])
+           // .addArgument([--make-runxml])
+           // .addArgument([--make-expxml])
+           // .addArgument([--force-copy])
+           // .addArgument([--skip-validate])
+           // .addArgument([--skip-upload])
+           // .addArgument([--test])
+        uploadJob.addParent(prepareUploadJobGermline);
 
         //TODO
         //cleanup data downloaded + created
+        //add README file
 
         Job cleanupJob = this.getWorkflow().createBashJob("cleanup_job");
         cleanupJob.getCommand().addArgument(_bin  + " " + resultsDirRoot + " " + inputBamPathGerm + " " + inputBamPathTumor);
