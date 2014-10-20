@@ -8,6 +8,7 @@ import net.sourceforge.seqware.pipeline.workflowV2.AbstractWorkflowDataModel;
 import net.sourceforge.seqware.pipeline.workflowV2.model.Job;
 import net.sourceforge.seqware.pipeline.workflowV2.model.SqwFile;
 import java.util.Date;
+import java.util.Calendar;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -68,7 +69,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
       //    gnosUploadFileDir = getProperty("gnos_output_file_dir");
       gnosKey = getProperty("gnos_key");
 
-      workflowID = getProperty("delly_workflowID")
+      workflowID = getProperty("delly_workflowID");
 
       delly_bin = getProperty("delly_bin");
       cov_bin = getProperty("cov_bin");
@@ -327,8 +328,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job invyFilterJob4 = this.getWorkflow().createBashJob("invy_filter_job4");
         invyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileinvyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileinvyFilterConf + ".bedpe.txt");
+            .addArgument("-v " + outputFileInvyFilterConf + ".vcf")
+            .addArgument("-o " + outputFileInvyFilterConf + ".bedpe.txt");
         invyFilterJob4.addParent(invyFilterJob3);        
 
         
@@ -366,8 +367,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job jumpyFilterJob4 = this.getWorkflow().createBashJob("jumpy_filter_job4");
         jumpyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFilejumpyFilterConf + ".vcf")
-            .addArgument("-o " + outputFilejumpyFilterConf + ".bedpe.txt");
+            .addArgument("-v " + outputFileJumpyFilterConf + ".vcf")
+            .addArgument("-o " + outputFileJumpyFilterConf + ".bedpe.txt");
         jumpyFilterJob4.addParent(jumpyFilterJob3);        
 
 
@@ -437,11 +438,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         //check and upload results
         String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-        String delly_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz"
-        String delly_bedpe_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt"
-        String cov_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".cov"
-        String delly_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz"
-        String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt"
+        String delly_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz";
+        String delly_bedpe_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt";
+        String cov_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".cov";
+        String delly_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz";
+        String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt";
 
         Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
         prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " " + resultsDirCov);
@@ -487,8 +488,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         //add README file
 
         Job cleanupJob = this.getWorkflow().createBashJob("cleanup_job");
-        cleanupJob.getCommand().addArgument(_bin  + " " + resultsDirRoot + " " + inputBamPathGerm + " " + inputBamPathTumor);
-        cleanupJob.addParent(upload_job);
+        cleanupJob.getCommand().addArgument(cleanup_bin  + " " + resultsDirRoot + " " + inputBamPathGerm + " " + inputBamPathTumor);
+        cleanupJob.addParent(uploadJob);
 
         
         
