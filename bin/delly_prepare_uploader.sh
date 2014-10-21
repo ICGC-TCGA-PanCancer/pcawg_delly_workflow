@@ -4,6 +4,9 @@
 # $META.sv.vcf.gz.tbi
 # META = Sample ID + Workflow + Date + Type
 
+DIR=$(cd $(dirname "$0"); pwd)
+export PATH=$PATH:$DIR
+
 DELLY2BED=$1
 RESULTSDIR_ROOT=$2
 FILENAME_DELLY=$3
@@ -14,7 +17,6 @@ TRA=$7
 FILENAME_COV=$8
 COVDIR=$9
 
-DIR=$(cd $(dirname "$0"); pwd)
 
 DELLY_COMBI=${RESULTSDIR_ROOT}/${FILENAME_DELLY}
 ## Combine VCF
