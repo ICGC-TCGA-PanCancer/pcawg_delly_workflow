@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # $META.sv.vcf.gz
 # $META.sv.vcf.gz.tbi
@@ -35,7 +35,7 @@ python ${DELLY2BED} -v ${DELLY_COMBI} -o ${DELLY_BEDPE}
 
 tar -cvzf ${DELLY_BEDPE}.tar.gz ${DELLY_BEDPE}
 
-md5sum ${DELLY_BEDPE}.tar.gz | awk '{print $1}' > ${DELLY_BEDPE}tar.gz.md5
+md5sum ${DELLY_BEDPE}.tar.gz | awk '{print $1}' > ${DELLY_BEDPE}.tar.gz.md5
 
 ## COV
 if [[ ! -z $COV_COMBI ]]; then
