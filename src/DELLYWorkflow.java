@@ -67,8 +67,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
       gnosInputFileURLGerm = getProperty("gnos_input_file_url_germ");
 
-      //      gnosUploadFileURL = getProperty("gnos_output_file_url");
-      //    gnosUploadFileDir = getProperty("gnos_output_file_dir");
+      gnosUploadFileURL = getProperty("gnos_output_file_url");
+      gnosUploadFileDir = getProperty("gnos_output_file_dir");
       gnosKey = getProperty("gnos_key");
 
       workflowID = getProperty("delly_workflowID");
@@ -467,7 +467,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument("--tarball-md5sum-files " + delly_bedpe_somatic  + ".tar.gz.md5" + " " + delly_bedpe_germline  + ".tar.gz.md5" + " "  + cov_somatic + ".tar.gz.md5")
             .addArgument("--outdir " + gnosUploadFileDir)
             .addArgument("--key " + gnosKey)
-            .addArgument("--upload-url " + gnosUploadFileURL);
+            .addArgument("--upload-url " + gnosUploadFileURL)
+            .addArgument("--study-refname-override " + "icgc_pancancer_vcf_test")
            // .addArgument([--workflow-src-url <http://... the source repo>])
            // .addArgument([--workflow-url <http://... the packaged SeqWare Zip>])
            // .addArgument([--workflow-name <workflow_name>])
@@ -484,12 +485,14 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
            // .addArgument([--force-copy])
            // .addArgument([--skip-validate])
            // .addArgument([--skip-upload])
-           // .addArgument([--test])
+           .addArgument([--test])
         uploadJob.addParent(prepareUploadJobGermline);
 
         //TODO
         //cleanup data downloaded + created
-        //add README file
+        //add README file:
+        // include a README in your tar.gz file that explains what each file is for
+        // include a directory inside the tar.gz file so, when the file is extracted, it produces a directory named the same as the root of the tar.gz file e.g. <dir_name>.tar.gz.
 
         Job cleanupJob = this.getWorkflow().createBashJob("cleanup_job");
         cleanupJob.getCommand().addArgument(cleanup_bin  + " " + resultsDirRoot + " " + inputBamPathGerm + " " + inputBamPathTumor);
