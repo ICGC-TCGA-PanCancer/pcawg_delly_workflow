@@ -19,7 +19,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
     private String cov_bin;
     private String cov_plot;
     private String vcfcombine_bin;
-    private String vcf-sort_bin;
+    private String vcf_sort_bin;
     private String gcnorm_r;
     private String rscript_bin;
 
@@ -77,8 +77,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
       cov_bin = getProperty("cov_bin");
       cov_plot = getProperty("cov_plot");
       gcnorm_r = getProperty("gcnorm_r");
-      vcfcombine = getProperty("vcfcombine_bin");
-      vcf-sort = getProperty("vcf-sort_bin");
+      vcfcombine_bin = getProperty("vcfcombine_bin");
+      vcf_sort_bin = getProperty("vcf_sort_bin");
       rscript_bin = getProperty("rscript_bin");
       prepare_uploader_bin = getProperty("prepare_uploader_bin");
       uploader_bin = getProperty("uploader_bin");

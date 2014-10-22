@@ -20,7 +20,7 @@ COVDIR=$9
 
 DELLY_COMBI=${RESULTSDIR_ROOT}/${FILENAME_DELLY}
 ## Combine VCF
-$DIR/bin/vcfcombine ${DEL} ${DUP} ${INV} ${TRA} | grep -vP '^hs37d5|^GL0' | $DIR/bin/vcf-sort | bgzip > ${DELLY_COMBI}
+$DIR/vcfcombine ${DEL} ${DUP} ${INV} ${TRA} | grep -vP '^hs37d5|^GL0' | $DIR/vcf-sort | bgzip > ${DELLY_COMBI}
 
 md5sum ${DELLY_COMBI} | awk '{print $1}' > ${DELLY_COMBI}.md5
 
