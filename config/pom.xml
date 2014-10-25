@@ -232,28 +232,6 @@
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
                 <executions>
-		    <execution>
-                        <id>build_docker_image</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-			    <commandlineArgs>build -t delly ${workflow-dir}/workflows/delly_docker </commandlineArgs>
-                        </configuration>
-                    </execution>
-		    <execution>
-                        <id>save_docker_image</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>docker</executable>
-                            <commandlineArgs>save -o ${workflow-dir}/workflows/delly_docker.tar delly</commandlineArgs>
-                        </configuration>
-                    </execution>
                     <execution>
                         <id>recursive_executable</id>
                         <phase>package</phase>

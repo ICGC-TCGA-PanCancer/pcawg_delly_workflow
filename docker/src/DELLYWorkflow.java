@@ -1,4 +1,4 @@
-    package io.seqware;
+package io.seqware;
 
 import java.util.Map;
 import java.util.ArrayList;
@@ -62,15 +62,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
           breakpoint = Boolean.valueOf(getProperty("breakpoint"));
       }
       inputBamPathTumor = getProperty("input_bam_path_tumor");
-
       gnosInputFileURLTumor = getProperty("gnos_input_file_url_tumor");
-
       gnosInputMetaDataURLTumor = getProperty("gnos_input_metadata_url_tumor");
 
       inputBamPathGerm = getProperty("input_bam_path_germ");
-
       gnosInputFileURLGerm = getProperty("gnos_input_file_url_germ");
-
       gnosInputMetaDataURLGerm = getProperty("gnos_input_metadata_url_germ");
 
       gnosUploadFileURL = getProperty("gnos_output_file_url");
@@ -168,7 +164,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
              
         String[] tumorName = tumorFile.split("/");
         String[] germName = germFile.split("/");
-        //String samplePair =tumorName[0] + "_vs_" + germName[0];
         String samplePair =tumorName[0];
         if (breakpoint == true) {
         //    samplePair += ".bp";
@@ -177,7 +172,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         ref_gen_gc_path = this.getFiles().get("ref_gen_gc").getProvisionedPath();
 
         String logFileDelly=resultsDirDelly + "/" + samplePair + ".deletions.log";
-        //String outputFileDelly=resultsDirDelly + "/" + samplePair + ".deletions.vcf";
         String outputFileDelly=resultsDirDelly + "/" + samplePair + ".deletions";
         String outputFileDellyFilter=resultsDirDelly + "/" + samplePair + ".deletions.somatic";
         String outputFileDellyFilterConf=resultsDirDelly + "/" + samplePair + ".deletions.somatic.highConf";
@@ -219,50 +213,54 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         String outputFileCovTumorGcnorm=resultsDirCov + "/" + tumorName[0] + ".gcnorm.cov";
              
+        
+        //load Docker image 
+        Job loadDockerJob = this.getWorkflow().createBashJob("loadDockerJob");
+        loadDockerJob.getCommand().addArgument("docker load -i " + this.getWorkflowBaseDir() + "/workflows/delly_docker.tar");
+
     
         //7 jobs per downloaded BAM pair (DELLY,DUPPY,INVY,JUMPY, 3xCOV)
         
+        //docker run -v /usr/tmp/seqware-oozie/oozie-992387e3-76a1-4e05-bb02-389aed9b8ce9/results:/mnt delly /usr/local/bin/dellyVcf2Tsv.py -v /mnt/delly/907c95e8-217c-4434-8b1d-3550507f0b80.deletions.vcf -o /mnt/jozo.out
+
         Job dellyJob = this.getWorkflow().createBashJob("delly_job");
-        dellyJob.getCommand().addArgument(delly_bin)
+        dellyJob.getCommand().addArgument("docker run -v " + resultsDirRoot + ":/results delly " + delly_bin)
             .addArgument("-t DEL")
             .addArgument("-s 9")
             .addArgument(breakpoint == true ? "-g " + ref_gen_path : " ")
             .addArgument("-q 1")
-            .addArgument("-p " + outputFileDellyDump)
-            .addArgument("-o " + outputFileDelly + ".vcf")
-
-
+            .addArgument("-p /" + outputFileDellyDump)
+            .addArgument("-o /" + outputFileDelly + ".vcf")
             .addArgument(tumorFile)
             .addArgument(germFile)
-            .addArgument(" &> " + logFileDelly);
+            .addArgument(" &> /" + logFileDelly);
+        dellyJob.addParent(loadDockerJob);
         dellyJob.addParent(downloadJobs.get(0));
         dellyJob.addParent(downloadJobs.get(1));
         
         Job dellyFilterJob1 = this.getWorkflow().createBashJob("delly_filter_job1");
-        dellyFilterJob1.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDelly + ".vcf")
-            .addArgument("-o " + outputFileDelly + ".bedpe.txt");
+        dellyFilterJob1.getCommand().addArgument("docker run -v " + resultsDirRoot + ":/results delly " + delly2bed)
+            .addArgument("-v /" + outputFileDelly + ".vcf")
+            .addArgument("-o /" + outputFileDelly + ".bedpe.txt");
         dellyFilterJob1.addParent(dellyJob);
         
         Job dellyFilterJob2 = this.getWorkflow().createBashJob("delly_filter_job2");
-        dellyFilterJob2.getCommand().addArgument(somatic_filter)
-            .addArgument("-v " + outputFileDelly + ".vcf")
-            .addArgument("-o " + outputFileDellyFilter + ".vcf");
+        dellyFilterJob2.getCommand().addArgument("docker run -v " + resultsDirRoot + ":/results delly " + somatic_filter)
+            .addArgument("-v /" + outputFileDelly + ".vcf")
+            .addArgument("-o /" + outputFileDellyFilter + ".vcf");
         dellyFilterJob2.addParent(dellyJob);
 
         Job dellyFilterJob3 = this.getWorkflow().createBashJob("delly_filter_job3");
-        dellyFilterJob3.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDellyFilter + ".vcf")
-            .addArgument("-o " + outputFileDellyFilter + ".bedpe.txt");
+        dellyFilterJob3.getCommand().addArgument("docker run -v " + resultsDirRoot + ":/results delly " + delly2bed)
+            .addArgument("-v /" + outputFileDellyFilter + ".vcf")
+            .addArgument("-o /" + outputFileDellyFilter + ".bedpe.txt");
         dellyFilterJob3.addParent(dellyFilterJob2);
 
         Job dellyFilterJob4 = this.getWorkflow().createBashJob("delly_filter_job4");
-        dellyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDellyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileDellyFilterConf + ".bedpe.txt");
+        dellyFilterJob4.getCommand().addArgument("docker run -v " + resultsDirRoot + ":/results delly " + delly2bed)
+            .addArgument("-v /" + outputFileDellyFilterConf + ".vcf")
+            .addArgument("-o /" + outputFileDellyFilterConf + ".bedpe.txt");
         dellyFilterJob4.addParent(dellyFilterJob3);
-
-
 
         //DUPPY
         Job duppyJob = this.getWorkflow().createBashJob("duppy_job");
