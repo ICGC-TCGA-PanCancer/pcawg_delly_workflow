@@ -33,7 +33,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
     private String ref_genome_path = "";
     private String ref_genome_gc_path = "";
     
-    private String resultsDirRoot = "results";
+    private String resultsDirRoot = "results/";
     private String resultsDirDelly = "results/delly";
     private String resultsDirJumpy = "results/jumpy";
     private String resultsDirDuppy = "results/duppy";
@@ -156,7 +156,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(gnosInputFileURLGerm);
         downloadJobs.add(gtDownloadJob2);
 
+        //convert provisioned files from soft to hard links
+        Job linkConvert = this.getWorkflow().createBashJob("linkConvert");
+        linkConvert.getCommand().addArgument("find provisionfiles -type l -exec bash -c 'ln -f \"$(readlink -m \"$0\")\" \"$0\"' {} \;");
         
+            
         //prepare output
         
         String tumorFile = inputBamPathTumor;
@@ -166,7 +170,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String[] germName = germFile.split("/");
         String samplePair =tumorName[0];
         if (breakpoint == true) {
-        //    samplePair += ".bp";
             ref_gen_path = this.getFiles().get("ref_gen").getProvisionedPath();
         }
         ref_gen_gc_path = this.getFiles().get("ref_gen_gc").getProvisionedPath();
@@ -217,6 +220,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         //load Docker image 
         Job loadDockerJob = this.getWorkflow().createBashJob("loadDockerJob");
         loadDockerJob.getCommand().addArgument("docker load -i " + this.getWorkflowBaseDir() + "/workflows/delly_docker.tar");
+        loadDockerJob.addParent(linkConvert);
 
     
         //7 jobs per downloaded BAM pair (DELLY,DUPPY,INVY,JUMPY, 3xCOV)       
@@ -385,8 +389,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         covJobGerm1.getCommand().addArgument("docker run -v `pwd`:/work delly " + cov_bin)
             .addArgument("-s 1000")
             .addArgument("-o 1000")
-            .addArgument("/work/" + germFile)
-            .addArgument("-f " + outputFileCovGerm1)
+            .addArgument("/work/" + germFile + "/*bam")
+            .addArgument("-f " + "/work/" + outputFileCovGerm1)
             .addArgument(" &> " + outputFileCovGerm1Log);
         covJobGerm1.addParent(downloadJobs.get(0));
         covJobGerm1.addParent(downloadJobs.get(1));
@@ -395,8 +399,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         covJobGerm2.getCommand().addArgument("docker run -v `pwd`:/work delly " + cov_bin)
             .addArgument("-s 10000")
             .addArgument("-o 10000")
-            .addArgument("/work/" + germFile)
-            .addArgument("-f " + outputFileCovGerm2)
+            .addArgument("/work/" + germFile +  "/*bam")
+            .addArgument("-f " + "/work/" + outputFileCovGerm2)
             .addArgument(" &> " + outputFileCovGerm2Log);
         covJobGerm2.addParent(downloadJobs.get(0));
         covJobGerm2.addParent(downloadJobs.get(1));
@@ -412,8 +416,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         covJobTumor1.getCommand().addArgument("docker run -v `pwd`:/work delly " + cov_bin)
             .addArgument("-s 1000")
             .addArgument("-o 1000")
-            .addArgument("/work/" + tumorFile)
-            .addArgument("-f " + outputFileCovTumor1)
+            .addArgument("/work/" + tumorFile + "/*bam")
+            .addArgument("-f " + "/work/" + outputFileCovTumor1)
             .addArgument(" &> " + outputFileCovTumor1Log);
         covJobTumor1.addParent(downloadJobs.get(0));
         covJobTumor1.addParent(downloadJobs.get(1));
@@ -422,8 +426,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         covJobTumor2.getCommand().addArgument("docker run -v `pwd`:/work delly " + cov_bin)
             .addArgument("-s 10000")
             .addArgument("-o 10000")
-            .addArgument("/work/" + tumorFile)
-            .addArgument("-f " + outputFileCovTumor2)
+            .addArgument("/work/" + tumorFile +  "/*bam")
+            .addArgument("-f " + "/work/" + outputFileCovTumor2)
             .addArgument(" &> " + outputFileCovTumor2Log);
         covJobTumor2.addParent(downloadJobs.get(0));
         covJobTumor2.addParent(downloadJobs.get(1));
@@ -453,11 +457,11 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt";
 
         Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-        prepareUploadJobSomatic.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " " + resultsDirCov);
+        prepareUploadJobSomatic.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin + " " + delly2bed  + " /work/" + resultsDirRoot + delly_somatic + " /work/" + outputFileDellyFilterConf + ".vcf" + " /work/" + outputFileDuppyFilterConf + ".vcf" + " /work/" + outputFileInvyFilterConf + ".vcf" + " /work/" + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " /work/" + resultsDirCov);
         prepareUploadJobSomatic.addParent(covJobPlot);
 
         Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
-        prepareUploadJobGermline.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin  + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf");
+        prepareUploadJobGermline.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin  + " " + delly2bed + " /work/" + resultsDirRoot + delly_germline + " /work/" + outputFileDellyFilterConfGerm + ".vcf" + " /work/" + outputFileDuppyFilterConfGerm + ".vcf" + " /work/" + outputFileInvyFilterConfGerm + ".vcf" + " /work/" + outputFileJumpyFilterConfGerm + ".vcf");:
         prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
         Job uploadJob = this.getWorkflow().createBashJob("upload_job");
@@ -466,7 +470,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument("--vcfs " + delly_somatic + ", " + delly_germline)
             .addArgument("--vcf-md5sum-files " + delly_somatic + ".md5" + ", " + delly_germline + ".md5")
             .addArgument("--vcf-idxs " + delly_somatic + ".tbi" + ", " + delly_germline + ".tbi")
-            .addArgument("vcf-idx-md5sum-files " + delly_somatic + ".tbi.md5" + ", " + delly_germline + ".tbi.md5")
+            .addArgument("--vcf-idx-md5sum-files " + delly_somatic + ".tbi.md5" + ", " + delly_germline + ".tbi.md5")
             .addArgument("--tarballs " + delly_bedpe_somatic  + ".tar.gz" + " " + delly_bedpe_germline  + ".tar.gz" + " "  + cov_somatic + ".tar.gz")
             .addArgument("--tarball-md5sum-files " + delly_bedpe_somatic  + ".tar.gz.md5" + " " + delly_bedpe_germline  + ".tar.gz.md5" + " "  + cov_somatic + ".tar.gz.md5")
             .addArgument("--outdir " + gnosUploadFileDir)
