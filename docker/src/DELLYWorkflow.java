@@ -450,18 +450,18 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         //check and upload results
         String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-        String delly_somatic = resultsDirRoot + "/" + samplePair + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz";
-        String delly_bedpe_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt";
-        String cov_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".cov";
-        String delly_germline = resultsDirRoot + "/" + samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz";
-        String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt";
+        String delly_somatic = resultsDirRoot  + samplePair + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz";
+        String delly_bedpe_somatic = resultsDirRoot+ samplePair + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt";
+        String cov_somatic = resultsDirRoot + samplePair + "." + workflowID + "." + currdateStamp + ".cov";
+        String delly_germline = resultsDirRoot + samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz";
+        String delly_bedpe_germline = resultsDirRoot + samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt";
 
         Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-        prepareUploadJobSomatic.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin + " " + delly2bed  + " /work/" + delly_somatic + " /work/" + outputFileDellyFilterConf + ".vcf" + " /work/" + outputFileDuppyFilterConf + ".vcf" + " /work/" + outputFileInvyFilterConf + ".vcf" + " /work/" + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " /work/" + resultsDirCov);
+        prepareUploadJobSomatic.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin + " " + delly2bed  + " /work/" + resultsDirRoot + " /work/" + delly_somatic + " /work/" + outputFileDellyFilterConf + ".vcf" + " /work/" + outputFileDuppyFilterConf + ".vcf" + " /work/" + outputFileInvyFilterConf + ".vcf" + " /work/" + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " /work/" + resultsDirCov);
         prepareUploadJobSomatic.addParent(covJobPlot);
 
         Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
-        prepareUploadJobGermline.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin  + " " + delly2bed + " /work/" + delly_germline + " /work/" + outputFileDellyFilterConfGerm + ".vcf" + " /work/" + outputFileDuppyFilterConfGerm + ".vcf" + " /work/" + outputFileInvyFilterConfGerm + ".vcf" + " /work/" + outputFileJumpyFilterConfGerm + ".vcf");
+        prepareUploadJobGermline.getCommand().addArgument("docker run -v `pwd`:/work delly " + prepare_uploader_bin  + " " + delly2bed + " /work/" + resultsDirRoot + " /work/" + delly_germline + " /work/" + outputFileDellyFilterConfGerm + ".vcf" + " /work/" + outputFileDuppyFilterConfGerm + ".vcf" + " /work/" + outputFileInvyFilterConfGerm + ".vcf" + " /work/" + outputFileJumpyFilterConfGerm + ".vcf");
         prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
         Job uploadJob = this.getWorkflow().createBashJob("upload_job");
