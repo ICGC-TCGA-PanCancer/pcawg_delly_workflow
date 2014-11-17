@@ -15,6 +15,7 @@ RUN apt-get install -y tar git curl nano wget dialog net-tools build-essential
 RUN apt-get install -y python python-dev python-distribute python-pip
 RUN apt-get install -y r-base r-base-dev
 RUN apt-get install -y tabix
+RUN apt-get install -y libdata-uuid-perl libjson-perl libxml-xpath-perl libxml-dom-perl libxml-libxml-perl
 RUN pip install cython
 RUN pip install pybedtools
 RUN pip install numpy

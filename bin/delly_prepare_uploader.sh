@@ -9,7 +9,7 @@ export PATH=$PATH:$DIR
 
 DELLY2BED=$1
 RESULTSDIR_ROOT=$2
-FILENAME_DELLY=$3
+DELLY_COMBI=$3
 DEL=$4
 DUP=$5
 INV=$6
@@ -18,7 +18,6 @@ FILENAME_COV=$8
 COVDIR=$9
 
 
-DELLY_COMBI=${RESULTSDIR_ROOT}/${FILENAME_DELLY}
 ## Combine VCF
 $DIR/vcfcombine ${DEL} ${DUP} ${INV} ${TRA} | grep -vP '^hs37d5|^GL0' | $DIR/vcf-sort | bgzip > ${DELLY_COMBI}
 
