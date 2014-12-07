@@ -28,10 +28,9 @@ Options:
 
 
 from __future__ import print_function
-import sys,os
-sys.path.append(os.path.join(os.path.dirname(__file__), "py"))
 from docopt import docopt
 import vcf
+import sys
 import csv
 import re
 import gzip
@@ -59,10 +58,6 @@ region_file = ''
 if arguments['<regions>']:
     region_file = arguments['<regions>']
 
-#gencode = BedTool('/g/korbel/Users/weischen/ownCloud/data/gencode.v17.gene.minimal.bed.gz')
-#gencode = BedTool('/Users/weischen/ownCloud/data/gencode.v17.gene.minimal.bed.gz')
-#region = '/g/korbel/shared/datasets/chromatin_tracks/histone_modifications/hnisz_super_enhancers.bed.gz'
-
 
 def overlap(x,y,d=100000):
     regiondist = ''
@@ -74,8 +69,8 @@ def overlap(x,y,d=100000):
         regiondist = min(abs(x[-1]-y[0]), abs(y[-1]-x[0]) )
     return regiondist
 
-def enhancer_overlap(bedpe_list, header, region_file):
-    header = header + ['pos1_enhancer', 'pos2_enhancer']
+def cisreg_overlap(bedpe_list, header, region_file):
+    header = header + ['pos1_cisreg', 'pos2_cisreg']
     with gzip.open(region_file, 'rb') as region_in:
         region_reader = csv.reader(region_in, delimiter="\t")
         region_list = list(region_reader)
@@ -113,7 +108,7 @@ with open(fileOut, 'wb') as w:
     csv_writer = csv.writer(w, delimiter="\t", lineterminator="\n")
     vcf_reader=vcf.Reader(open(vcfFile), 'r', compressed=True) if vcfFile.endswith('.gz') else vcf.Reader(open(vcfFile), 'r', compressed=False)
     if not delly_format:
-        header = ['chrom1', 'start1', 'end1', 'chrom2', 'start2', 'end2', 'id', 'pairs', 'strand1', 'strand2', 'svtype', 'size', 'orient', 'mapq', 'split_reads', 'split_mapq', 'split_consensus',  'pid', 'af', 'genotypes', 'tumor_count', 'germ_count']
+        header = ['chrom1', 'start1', 'end1', 'chrom2', 'start2', 'end2', 'id', 'pairs', 'strand1', 'strand2', 'svtype', 'size', 'orient', 'mapq', 'split_reads', 'split_mapq', 'split_consensus',  'pid', 'af', 'genotypes', 'rd_ratio', 'tumor_count', 'germ_count']
         csv_writer.writerow(header)
     for record in vcf_reader:
         out = []
@@ -140,6 +135,10 @@ with open(fileOut, 'wb') as w:
                     alt_AF.append(0)
             alt_AF = ';'.join(map(str, alt_AF))
             try:
+                rdRatio = record.INFO['RDRATIO']
+            except Exception, e:
+                rdRatio = "."
+            try:
                 genotypes = ';'.join(map(str,[record.genotype(sample).data.GT for sample in samples]))
             except Exception, e:
                 genotypes = '.;.'
@@ -165,11 +164,15 @@ with open(fileOut, 'wb') as w:
                     pass
             out = [record.CHROM.replace('.fa', ''), record.POS, int(record.POS)+1, record.INFO['CHR2'].replace('.fa', ''), \
             record.INFO['END'], int(record.INFO['END'])+1, record.ID, record.INFO['PE'], strand_1, strand_2, record.INFO['SVTYPE'], \
-            record.INFO['SVLEN'], record.INFO['CT'],  record.INFO['MAPQ'], split, splitmapq, consensus, pid, alt_AF, genotypes, tum_count, germ_count]
+            record.INFO['SVLEN'], record.INFO['CT'],  record.INFO['MAPQ'], split, splitmapq, consensus, pid, alt_AF,  genotypes, rdRatio, tum_count, germ_count]
             bedpe_list.append(out)
             csv_writer.writerow(out)
 
 print ("\n\nFile(s) generated:\n\t", fileOut)
+
+
+def chrom_format(gencode):
+	return BedTool([list(j.replace('chr', '') for j in i) for i in gencode])
 
 
 
@@ -177,28 +180,28 @@ print ("\n\nFile(s) generated:\n\t", fileOut)
 
 if not delly_format and gencode and len(bedpe_list) > 0:
     bedpe_bed = BedTool(bedpe_list)
+    if not 'chr' in bedpe_list[0][0]:
+        gencode = chrom_format(gencode)
     bedpe_gencode = bedpe_bed.closest(gencode, d=True)
     bedpe_bed2 = BedTool([i[3:6] + i[:] for i in bedpe_gencode[:]])
     del(bedpe_gencode)
     bedpe_gencode = bedpe_bed2.closest(gencode, d=True)
-    #BedTool([i[3:] for i in bedpe_gencode[:]]).saveas(fileOutAnno)
     bedpe_list2 = [i[3:] for i in bedpe_gencode[:]]
     bedpe_header = header + ['chrom_gene1', 'start_gene1', 'end_gene1', 'name_gene1', 'strand_gene1', 'dist_gene1', 'chrom_gene2', 'start_gene2', 'end_gene2', 'name_gene2', 'strand_gene2', 'dist_gene2','fusion_gene']
     with open(fileOutAnno, 'wb') as wout:
         bedpe_writer = csv.writer(wout, delimiter="\t")
-        #bedpe_writer.writerow(bedpe_header)
         max_distance = 50000
         gene_list = list()
         for r in bedpe_list2:
             fusion = '.'
-            gene1 = r[25]
-            gene2 = r[31]
+            gene1 = r[26]
+            gene2 = r[32]
             strand1 = r[8]
             strand2 = r[9]
-            strandGene1 = r[26]
-            strandGene2 = r[32]
-            distGene1 = int(r[27])
-            distGene2 = int(r[33])
+            strandGene1 = r[27]
+            strandGene2 = r[33]
+            distGene1 = int(r[28])
+            distGene2 = int(r[34])
             if gene1 != gene2 and distGene1 + distGene2 < max_distance:
                 if strand1 == '+' and strand2 == '+':
                     if strandGene1 == '+' and strandGene2 == '+':
@@ -222,9 +225,8 @@ if not delly_format and gencode and len(bedpe_list) > 0:
                         fusion = gene2 + ':' + gene1
             gene_list.append(r + [fusion])
         gene_list.sort(key = lambda x: (x[0], int(x[1])) )
-        #bedpe_writer.writerow(r + [fusion])
         if region_file:
-            out = enhancer_overlap(gene_list, bedpe_header, region_file)
+            out = cisreg_overlap(gene_list, bedpe_header, region_file)
         else:
             out = [bedpe_header] + gene_list
 

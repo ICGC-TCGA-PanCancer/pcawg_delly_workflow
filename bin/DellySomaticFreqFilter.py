@@ -1,14 +1,13 @@
 #! /usr/bin/env python
 # DellySomaticFreqFilter.py
 from __future__ import print_function
-import sys,os
-sys.path.append(os.path.join(os.path.dirname(__file__), "py"))
 import argparse
 import numpy
 import re
 import collections
 import copy
 import vcf
+import sys
 import gzip
 
 
@@ -29,23 +28,6 @@ def overlapValid(s1, e1, s2, e2, reciprocalOverlap=0.8, maxOffset=250):
     if max(abs(s2-s1), abs(e2-e1))>maxOffset:
         return False
     return True
-
-# def projectSpec(vcfInfo, tumorType, tumorTypeCtrlFrq,tumorTypeTumFrq, max1kGP=0.05):
-#     projectOnly=False
-#     scList = [sc for sc in vcfInfo if 'SC' in sc]
-#     if (vcfInfo['SC_1KGP_F'] <= max1kGP \
-#     or (vcfInfo['SC_1KGP_F'] <= max1kGP*2 \
-#     and vcfInfo['SC_1KGP_C']<=2)) \
-#     and (vcfInfo.get(tumorTypeCtrlFrq) >0 \
-#     or vcfInfo.get(tumorTypeTumFrq) >0):
-#         projectOnly=True
-#         for k in scList:
-#             if not tumorType in k \
-#             and k.endswith('F') and int(record.INFO.get(k)) > 0:
-#                     projectOnly = False
-#                     break
-#     return projectOnly
-
 
 def germSpecFilter(vcfInfo, tumorType, tumorTypeCtrlFrq,tumorTypeTumFrq,max1kGP=0.05):
     germOnly=False
@@ -126,11 +108,12 @@ if args.altAF:
 suppPairsHiQ = 4
 if args.suppPairs:
     suppPairsHiQ = int(args.suppPairs)
-tumorType = 'PRAD'
+tumorType = ''
 if args.tumorType:
     tumorType = args.tumorType
 
 vcfFile = args.vcfFile
+siteFilter = ''
 siteFilter = args.siteFilter
 #svType = args.svType
 outFile = vcfFile.split('.vcf')[0] + '.somatic.vcf'
@@ -144,6 +127,7 @@ outFileGermConf = outFile.replace('.somatic', '').split('.vcf')[0] + '.germline.
 
 # Collect high-quality SVs
 sv = dict()
+rdRat = dict()
 svDups = collections.defaultdict(list)
 validRecordID = set()
 validGermRecordID = set()
@@ -153,18 +137,20 @@ if vcfFile:
         vcfInfo = record.INFO
         suppPairs = 2
         svType = re.sub(r'[0-9]*','',record.ID) 
-        listOfSamples = ', '.join(map(str, list(set([re.sub('SC_((.*))_[a-z]*_[CF]', '\\1', sc) for sc in record.INFO if 'SC_' in sc and '1KGP' not in sc]))))
-        if [sc for sc in record.INFO if tumorType in sc]:
-            tumorTypeCtrlFrq = 'SC_' + tumorType + '_control_F'
-            tumorTypeCtrlCount = 'SC_' + tumorType + '_control_C'
-            tumorTypeTumFrq = 'SC_' + tumorType + '_tumor_F'
-            tumorTypeTumCount = 'SC_' + tumorType + '_tumor_C'
-            popFilter = True
-        elif listOfSamples and tumorType:
-            print (tumorType, "not present in INFO field. please skip tumorRype or use one of these tumor samples [-s]: {0}\n\nExiting".format(listOfSamples))
-            sys.exit(-1)
-        else:
-            popFilter = False
+        popFilter = False
+        if tumorType:
+            listOfSamples = ', '.join(map(str, list(set([re.sub('SC_((.*))_[a-z]*_[CF]', '\\1', sc) for sc in record.INFO if 'SC_' in sc and '1KGP' not in sc]))))
+            if [sc for sc in record.INFO if tumorType in sc]:
+                tumorTypeCtrlFrq = 'SC_' + tumorType + '_control_F'
+                tumorTypeCtrlCount = 'SC_' + tumorType + '_control_C'
+                tumorTypeTumFrq = 'SC_' + tumorType + '_tumor_F'
+                tumorTypeTumCount = 'SC_' + tumorType + '_tumor_C'
+                popFilter = True
+            elif listOfSamples and tumorType:
+                print (tumorType, "not present in INFO field. please skip tumorRype or use one of these tumor samples [-s]: {0}\n\nExiting".format(listOfSamples))
+                sys.exit(-1)
+            else:
+                popFilter = False
         if ((record.INFO['SVLEN'] >= minSize) and (record.INFO['SVLEN'] <= maxSize) or (record.INFO['SVTYPE'] == 'TRA'))  and ((not siteFilter) or (len(record.FILTER) == 0)):
             precise = False
             if ('PRECISE' in record.INFO.keys()):
@@ -180,7 +166,7 @@ if vcfFile:
             isGermSpec = False
             for e, call in enumerate(record.samples):
                 if (call.called):
-                    if (re.search(r"[Nn]ormal|_N0[0-9]_|_DNA_B_", call.sample) != None):
+                    if (re.search(r"[Bb]lood|[Cc]ontrol|[Gg]erm|[Nn]ormal|_N0[0-9]_|_DNA_B_", call.sample) != None):
                         genoRef = call['GT']
                         rcRef = RefGeno(call, rcRef)
                         rcGermAlt = AltGeno(call, rcGermAlt)
@@ -202,12 +188,13 @@ if vcfFile:
                         rcAlt = AltGeno(call, rcAlt)
                         rcRef = rcAlt
                         callTum = call
-            if (len(rcRef) > 0) and (len(rcAlt) > 0):
-                rdRatio = 1
-                if numpy.median(rcRef):
-                    rdRatio = numpy.median(rcAlt)/numpy.median(rcRef)
-                    if rdRatio > 4:
-                        suppPairs = suppPairs + suppPairs * int(rdRatio/4.0)
+            rdRatio = 1
+            if rcAlt and rcRef and numpy.median(rcRef)>0:
+                rdRatio = round(numpy.median(rcAlt)/numpy.median(rcRef),4)
+                if rdRatio > 4:
+                    suppPairs = suppPairs + suppPairs * int(rdRatio/4.0)
+            rdRat[record.ID] = rdRatio
+            if (len(rcRef) > 0) and (len(rcAlt) > 0) and genoRef != genoAlt:
                 isTumSpec = True
             elif (len(rcGermAlt) > 0) and (len(rcAlt) > 0) and genoRef == genoAlt:
                 isGermSpec = True
@@ -238,6 +225,7 @@ if vcfFile:
     vcf_reader=vcf.Reader(open(vcfFile), 'r', compressed=True) if vcfFile.endswith('.gz') else vcf.Reader(open(vcfFile), 'r', compressed=False)
     vcf_reader.infos['SOMATIC'] = vcf.parser._Info('SOMATIC', 0, 'Flag', 'Somatic structural variant.')
     vcf_reader.infos['GERMLINE'] = vcf.parser._Info('GERMLINE', 0, 'Flag', 'Germline structural variant.')
+    vcf_reader.infos['RDRATIO'] = vcf.parser._Info('RDRATIO', 1, 'Float', 'Read-depth ratio of tumor vs. normal.')
     vcf_writer = vcf.Writer(open(outFile, 'w'), vcf_reader, lineterminator='\n')
     vcfConf_writer = vcf.Writer(open(outFileSomaticConf, 'w'), vcf_reader, lineterminator='\n')
     vcf_Germwriter = vcf.Writer(open(outFileGerm, 'w'), vcf_reader, lineterminator='\n')    
@@ -264,6 +252,7 @@ if vcfFile:
                 foundBetterHit = True
                 break
         if not foundBetterHit:
+            record.INFO['RDRATIO'] = rdRat[record.ID]
             if record.ID in validRecordID:
                 record.INFO['SOMATIC'] = True
                 vcf_writer.write_record(record)
