@@ -464,15 +464,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job uploadJob = this.getWorkflow().createBashJob("upload_job");
         uploadJob.getCommand().addArgument("/usr/bin/perl " + uploader_bin)
-<<<<<<< HEAD
-            .addArgument("--metadata-urls " + gnosInputMetaDataURLTumor + ", " + gnosInputMetaDataURLGerm)
-            .addArgument("--vcfs " + delly_somatic + ", " + delly_germline)
-            .addArgument("--vcf-md5sum-files " + delly_somatic + ".md5" + ", " + delly_germline + ".md5")
-            .addArgument("--vcf-idxs " + delly_somatic + ".tbi" + ", " + delly_germline + ".tbi")
-            .addArgument("vcf-idx-md5sum-files " + delly_somatic + ".tbi.md5" + ", " + delly_germline + ".tbi.md5")
-            .addArgument("--tarballs " + delly_bedpe_somatic  + ".tar.gz" + " " + delly_bedpe_germline  + ".tar.gz" + " "  + cov_somatic + ".tar.gz")
-            .addArgument("--tarball-md5sum-files " + delly_bedpe_somatic  + ".tar.gz.md5" + " " + delly_bedpe_germline  + ".tar.gz.md5" + " "  + cov_somatic + ".tar.gz.md5")
-=======
             .addArgument("--metadata-urls " + samplePair)
             .addArgument("--vcfs " + resultsDirRoot + "/" + delly_somatic + ", " + resultsDirRoot + "/" + delly_germline)
             .addArgument("--vcf-md5sum-files " + resultsDirRoot + "/" + delly_somatic + ".md5" + ", " + resultsDirRoot + "/" + delly_germline + ".md5")
@@ -480,7 +471,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument("--vcf-idx-md5sum-files " + resultsDirRoot + "/" + delly_somatic + ".tbi.md5" + ", " + resultsDirRoot + "/" + delly_germline + ".tbi.md5")
             .addArgument("--tarballs " + resultsDirRoot + "/" + delly_bedpe_somatic  + ".tar.gz" + " " + resultsDirRoot + "/" + delly_bedpe_germline  + ".tar.gz" + " "  + cov_somatic + ".tar.gz")
             .addArgument("--tarball-md5sum-files " + resultsDirRoot + "/" + delly_bedpe_somatic  + ".tar.gz.md5" + " " + resultsDirRoot + "/" + delly_bedpe_germline  + ".tar.gz.md5" + " "  + cov_somatic + ".tar.gz.md5")
->>>>>>> de26d97e2a330a3065c5b48aaf240d14e4ebb007
             .addArgument("--outdir " + gnosUploadFileDir)
             .addArgument("--key " + gnosKey)
             .addArgument("--upload-url " + gnosUploadFileURL)
