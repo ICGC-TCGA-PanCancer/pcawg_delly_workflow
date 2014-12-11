@@ -29,6 +29,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
     private String somatic_filter;
     private String delly2bed;
+    private String delly_pe_dump;
 
     private String ref_genome_path = "";
     private String ref_genome_gc_path = "";
@@ -335,7 +336,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job duppyFilterJob5 = this.getWorkflow().createBashJob("duppy_filter_job5");
         duppyFilterJob5.getCommand().addArgument("docker run -v `pwd`:/work delly bash " + delly_pe_dump)
-            .addArgument(" /work/" + outputFileduppyFilter + ".vcf")
+            .addArgument(" /work/" + outputFileDuppyFilter + ".vcf")
             .addArgument(" /work/" + outputFileDuppyDump)
             .addArgument(" /work/" + tumorFile + "/*bam")
             .addArgument(" > /work/" + outputFileDuppySomaticDump);
@@ -390,7 +391,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job invyFilterJob5 = this.getWorkflow().createBashJob("invy_filter_job5");
         invyFilterJob5.getCommand().addArgument("docker run -v `pwd`:/work delly bash " + delly_pe_dump)
-            .addArgument(" /work/" + outputFileinvyFilter + ".vcf")
+            .addArgument(" /work/" + outputFileInvyFilter + ".vcf")
             .addArgument(" /work/" + outputFileInvyDump)
             .addArgument(" /work/" + tumorFile + "/*bam")
             .addArgument(" > /work/" + outputFileInvySomaticDump);
@@ -398,7 +399,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job invyFilterJob6 = this.getWorkflow().createBashJob("invy_filter_job6");
         invyFilterJob6.getCommand().addArgument("docker run -v `pwd`:/work delly bash " + delly_pe_dump)
-            .addArgument(" /work/" + outputFileinvyFilterGerm + ".vcf")
+            .addArgument(" /work/" + outputFileInvyFilterGerm + ".vcf")
             .addArgument(" /work/" + outputFileInvyDump)
             .addArgument(" /work/" + germFile + "/*bam")
             .addArgument(" > /work/" + outputFileInvyGermDump);
@@ -445,7 +446,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job jumpyFilterJob5 = this.getWorkflow().createBashJob("jumpy_filter_job5");
         jumpyFilterJob5.getCommand().addArgument("docker run -v `pwd`:/work delly bash " + delly_pe_dump)
-            .addArgument(" /work/" + outputFilejumpyFilter + ".vcf")
+            .addArgument(" /work/" + outputFileJumpyFilter + ".vcf")
             .addArgument(" /work/" + outputFileJumpyDump)
             .addArgument(" /work/" + tumorFile + "/*bam")
             .addArgument(" > /work/" + outputFileJumpySomaticDump);
@@ -453,7 +454,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         Job jumpyFilterJob6 = this.getWorkflow().createBashJob("jumpy_filter_job6");
         jumpyFilterJob6.getCommand().addArgument("docker run -v `pwd`:/work delly bash " + delly_pe_dump)
-            .addArgument(" /work/" + outputFilejumpyFilterGerm + ".vcf")
+            .addArgument(" /work/" + outputFileJumpyFilterGerm + ".vcf")
             .addArgument(" /work/" + outputFileJumpyDump)
             .addArgument(" /work/" + germFile + "/*bam")
             .addArgument(" > /work/" + outputFileJumpyGermDump);
