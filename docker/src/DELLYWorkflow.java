@@ -303,8 +303,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument("-q 1")
             .addArgument("-p /work/" + outputFileDuppyDump)
             .addArgument("-o /work/" + outputFileDuppy + ".vcf")
-            .addArgument("/work/" + tumorFile)
-            .addArgument("/work/" + germFile)
+            .addArgument("/work/" + tumorFile + "/*bam")
+            .addArgument("/work/" + germFile + "/*bam" )
             .addArgument(" &> " + logFileDuppy);
         duppyJob.addParent(loadDockerJob);
         duppyJob.addParent(downloadJobs.get(0));
@@ -358,8 +358,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(breakpoint == true ? "-g /work/" + ref_gen_path : " ")
             .addArgument("-p /work/" + outputFileInvyDump)
             .addArgument("-o /work/" + outputFileInvy + ".vcf")
-            .addArgument("/work/" + tumorFile)
-            .addArgument("/work/" + germFile)
+            .addArgument("/work/" + tumorFile + "/*bam")
+            .addArgument("/work/" + germFile + "/*bam")
             .addArgument(" &> " + logFileInvy);
         invyJob.addParent(loadDockerJob);
         invyJob.addParent(downloadJobs.get(0));
@@ -413,13 +413,13 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             //.addArgument(breakpoint == true ? "-g " + ref_gen_path : " ") Not run breakpoint for jumpy
             .addArgument("-p /work/" + outputFileJumpyDump)
             .addArgument("-o /work/" + outputFileJumpy + ".vcf")
-            .addArgument("/work/" + tumorFile)
-            .addArgument("/work/" +germFile)
+            .addArgument("/work/" + tumorFile + "/*bam")
+            .addArgument("/work/" +germFile + "/*bam")
             .addArgument(" &> " + logFileJumpy);
         jumpyJob.addParent(loadDockerJob);
         jumpyJob.addParent(downloadJobs.get(0));
         jumpyJob.addParent(downloadJobs.get(1));
-
+ + "/*bam"
          Job jumpyFilterJob1 = this.getWorkflow().createBashJob("jumpy_filter_job1");
         jumpyFilterJob1.getCommand().addArgument("docker run -v `pwd`:/work delly " + delly2bed)
             .addArgument("-v /work/" + outputFileJumpy + ".vcf")
