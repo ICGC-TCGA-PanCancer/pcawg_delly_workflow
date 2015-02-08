@@ -116,7 +116,7 @@ with open(fileOut, 'wb') as w:
         samples_base = [re.sub(r'((.*))_[0-9]{6}_.*sequence.*', '\\1', x) for x in samples]
         pid = '_vs_'.join(map(str, samples_base))
         vcf_id = pid + '_' + record.ID
-        strand_1, strand_2 = record.INFO['CT'].replace('3to', '+to').replace('5to', '-to').replace('to3', 'to-').replace('to5', 'to+').split('to')
+        strand_1, strand_2 = record.INFO['CT'].replace('3to', '+to').replace('5to', '-to').replace('to3', 'to+').replace('to5', 'to-').split('to')
         svTypeConvert = record.INFO['SVTYPE'].replace('DEL', 'Deletion').replace('DUP', 'Duplication').replace('INV', 'Inversion').replace('TRA', 'Translocation')
         # DELLY Format:
         if delly_format:
@@ -193,6 +193,7 @@ if not delly_format and gencode and len(bedpe_list) > 0:
         max_distance = 50000
         gene_list = list()
         for r in bedpe_list2:
+            r = [i.replace('\r', '') for i in r]
             fusion = '.'
             gene1 = r[26]
             gene2 = r[32]
