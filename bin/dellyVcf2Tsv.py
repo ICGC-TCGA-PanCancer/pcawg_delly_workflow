@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-
 """
 
 ###############################
@@ -190,7 +189,7 @@ if not delly_format and gencode and len(bedpe_list) > 0:
     bedpe_header = header + ['chrom_gene1', 'start_gene1', 'end_gene1', 'name_gene1', 'strand_gene1', 'dist_gene1', 'chrom_gene2', 'start_gene2', 'end_gene2', 'name_gene2', 'strand_gene2', 'dist_gene2','fusion_gene']
     with open(fileOutAnno, 'wb') as wout:
         bedpe_writer = csv.writer(wout, delimiter="\t")
-        max_distance = 50000
+        maxs_distance = 50000
         gene_list = list()
         for r in bedpe_list2:
             r = [i.replace('\r', '') for i in r]
@@ -205,24 +204,24 @@ if not delly_format and gencode and len(bedpe_list) > 0:
             distGene2 = int(r[34])
             if gene1 != gene2 and distGene1 + distGene2 < max_distance:
                 if strand1 == '+' and strand2 == '+':
-                    if strandGene1 == '+' and strandGene2 == '+':
-                        fusion = gene1 + ':' + gene2
-                    elif strandGene1 == '-' and strandGene2 == '-':
-                        fusion = gene2 + ':' + gene1
-                elif strand1 == '+' and strand2 == '-':
                     if strandGene1 == '+' and strandGene2 == '-':
                         fusion = gene1 + ':' + gene2
                     elif strandGene1 == '-' and strandGene2 == '+':
                         fusion = gene2 + ':' + gene1
-                elif strand1 == '-' and strand2 == '+':
-                    if strandGene1 == '-' and strandGene2 == '+':
+                elif strand1 == '+' and strand2 == '-':
+                    if strandGene1 == '+' and strandGene2 == '+':
                         fusion = gene1 + ':' + gene2
-                    elif strandGene1 == '+' and strandGene2 == '-':
+                    elif strandGene1 == '-' and strandGene2 == '-':
                         fusion = gene2 + ':' + gene1
-                elif strand1 == '-' and strand2 == '-':
+                elif strand1 == '-' and strand2 == '+':
                     if strandGene1 == '-' and strandGene2 == '-':
                         fusion = gene1 + ':' + gene2
                     elif strandGene1 == '+' and strandGene2 == '+':
+                        fusion = gene2 + ':' + gene1
+                elif strand1 == '-' and strand2 == '-':
+                    if strandGene1 == '-' and strandGene2 == '+':
+                        fusion = gene1 + ':' + gene2
+                    elif strandGene1 == '+' and strandGene2 == '-':
                         fusion = gene2 + ':' + gene1
             gene_list.append(r + [fusion])
         gene_list.sort(key = lambda x: (x[0], int(x[1])) )
