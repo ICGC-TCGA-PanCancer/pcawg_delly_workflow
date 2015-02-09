@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+
 """
 
 ###############################
@@ -189,7 +190,7 @@ if not delly_format and gencode and len(bedpe_list) > 0:
     bedpe_header = header + ['chrom_gene1', 'start_gene1', 'end_gene1', 'name_gene1', 'strand_gene1', 'dist_gene1', 'chrom_gene2', 'start_gene2', 'end_gene2', 'name_gene2', 'strand_gene2', 'dist_gene2','fusion_gene']
     with open(fileOutAnno, 'wb') as wout:
         bedpe_writer = csv.writer(wout, delimiter="\t")
-        maxs_distance = 50000
+        max_distance = 50000
         gene_list = list()
         for r in bedpe_list2:
             r = [i.replace('\r', '') for i in r]
@@ -225,6 +226,7 @@ if not delly_format and gencode and len(bedpe_list) > 0:
                         fusion = gene2 + ':' + gene1
             gene_list.append(r + [fusion])
         gene_list.sort(key = lambda x: (x[0], int(x[1])) )
+        #bedpe_writer.writerow(r + [fusion])
         if region_file:
             out = cisreg_overlap(gene_list, bedpe_header, region_file)
         else:
