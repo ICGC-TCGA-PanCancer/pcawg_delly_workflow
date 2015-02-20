@@ -419,7 +419,6 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         jumpyJob.addParent(loadDockerJob);
         jumpyJob.addParent(downloadJobs.get(0));
         jumpyJob.addParent(downloadJobs.get(1));
- + "/*bam"
          Job jumpyFilterJob1 = this.getWorkflow().createBashJob("jumpy_filter_job1");
         jumpyFilterJob1.getCommand().addArgument("docker run -v `pwd`:/work delly " + delly2bed)
             .addArgument("-v /work/" + outputFileJumpy + ".vcf")
