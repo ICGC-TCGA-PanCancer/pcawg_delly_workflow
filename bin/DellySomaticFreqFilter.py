@@ -54,7 +54,11 @@ def tumSpecFilter(vcfInfo, tumorType, tumorTypeCtrlFrq,tumorTypeTumFrq, maxCtrl=
     and int(vcfInfo['SC_1KGP_C'] )<= 5)) \
     and float(vcfInfo[tumorTypeTumFrq]) > 0:
         for k in scList:
-            if k.endswith('control_F') and float(vcfInfo.get(k)) > maxCtrl:
+            try:
+                varCount = ''.join(map(str,vcfInfo.get(k)))
+            except Exception, e:
+                varCount = vcfInfo.get(k)
+            if k.endswith('control_F') and float(varCount) > maxCtrl:
                 tumOnly=False
                 break
             else:
@@ -136,6 +140,9 @@ if vcfFile:
     for record in vcf_reader:
         vcfInfo = record.INFO
         suppPairs = 2
+        sv_len = 0
+        if record.CHROM == record.INFO['CHR2']:
+            sv_len = abs(int(record.POS) - int(record.INFO['END']))
         svType = re.sub(r'[0-9]*','',record.ID) 
         popFilter = False
         if tumorType:
@@ -151,7 +158,7 @@ if vcfFile:
                 sys.exit(-1)
             else:
                 popFilter = False
-        if ((record.INFO['SVLEN'] >= minSize) and (record.INFO['SVLEN'] <= maxSize) or (record.INFO['SVTYPE'] == 'TRA'))  and ((not siteFilter) or (len(record.FILTER) == 0)):
+        if ((sv_len >= minSize) and (sv_len <= maxSize) or (record.INFO['SVTYPE'] == 'TRA'))  and ((not siteFilter) or (len(record.FILTER) == 0)):
             precise = False
             if ('PRECISE' in record.INFO.keys()):
                 precise = record.INFO['PRECISE']
@@ -191,8 +198,8 @@ if vcfFile:
             rdRatio = 1
             if rcAlt and rcRef and numpy.median(rcRef)>0:
                 rdRatio = round(numpy.median(rcAlt)/numpy.median(rcRef),4)
-                if rdRatio > 4:
-                    suppPairs = suppPairs + suppPairs * int(rdRatio/4.0)
+                if rdRatio > 2:
+                    suppPairs = suppPairs + suppPairs * round(rdRatio/2.0)
             rdRat[record.ID] = rdRatio
             if (len(rcRef) > 0) and (len(rcAlt) > 0) and genoRef != genoAlt:
                 isTumSpec = True
@@ -201,7 +208,7 @@ if vcfFile:
             else:
                 continue
             # Filtering: If DEL or DUP: Smaller than 10kb OR RD<0.85 OR RD>1.15 OR supporting pairs +1
-            if (isTumSpec or isGermSpec) and ((callTum['RV']>0 and record.INFO['SVLEN'] >= minSize) or ( record.INFO['SVLEN'] >= 500 or record.INFO['SVLEN'] == 0)) and (callTum['RV'] + callTum['DV'] >= suppPairs) and ((svType == 'INV') or (svType == 'INS') or (record.INFO['SVLEN'] <= 10000) \
+            if (isTumSpec or isGermSpec) and ((callTum['RV']>0 and sv_len >= minSize) or ( sv_len >= 500 or sv_len == 0)) and (callTum['RV'] + callTum['DV'] >= suppPairs) and ((svType == 'INV') or (svType == 'INS') or (sv_len <= 10000) \
             or (callTum['RV'] + callTum['DV'] >= suppPairs+1) or ((svType == 'DEL') and (rdRatio <= 0.85)) or ((svType == 'DUP') and (rdRatio >= 1.15))):
                 if isGermSpec:
                     validGermRecordID.add(record.ID)

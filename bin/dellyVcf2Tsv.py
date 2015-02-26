@@ -116,12 +116,15 @@ with open(fileOut, 'wb') as w:
         samples_base = [re.sub(r'((.*))_[0-9]{6}_.*sequence.*', '\\1', x) for x in samples]
         pid = '_vs_'.join(map(str, samples_base))
         vcf_id = pid + '_' + record.ID
+        sv_len = 0
+        if record.CHROM == record.INFO['CHR2']:
+            sv_len = abs(int(record.POS) - int(record.INFO['END']))
         strand_1, strand_2 = record.INFO['CT'].replace('3to', '+to').replace('5to', '-to').replace('to3', 'to+').replace('to5', 'to-').split('to')
         svTypeConvert = record.INFO['SVTYPE'].replace('DEL', 'Deletion').replace('DUP', 'Duplication').replace('INV', 'Inversion').replace('TRA', 'Translocation')
         # DELLY Format:
         if delly_format:
             if record.INFO['SVTYPE'] != "TRA":
-                out = [record.CHROM, record.POS, record.INFO['END'], record.INFO['SVLEN'], record.INFO['PE'], record.INFO['MAPQ'], '>' + svTypeConvert + '_' + record.INFO['CT'] + '_' + vcf_id + '<']
+                out = [record.CHROM, record.POS, record.INFO['END'], sv_len, record.INFO['PE'], record.INFO['MAPQ'], '>' + svTypeConvert + '_' + record.INFO['CT'] + '_' + vcf_id + '<']
             else:
                 out = [record.CHROM, record.POS, record.INFO['CHR2'], record.INFO['END'],  record.INFO['PE'], record.INFO['MAPQ'], '>' + svTypeConvert + '_' + record.INFO['CT'] + '_' + vcf_id + '<']
             csv_writer.writerow(out)
@@ -164,7 +167,7 @@ with open(fileOut, 'wb') as w:
                     pass
             out = [record.CHROM.replace('.fa', ''), record.POS, int(record.POS)+1, record.INFO['CHR2'].replace('.fa', ''), \
             record.INFO['END'], int(record.INFO['END'])+1, record.ID, record.INFO['PE'], strand_1, strand_2, record.INFO['SVTYPE'], \
-            record.INFO['SVLEN'], record.INFO['CT'],  record.INFO['MAPQ'], split, splitmapq, consensus, pid, alt_AF,  genotypes, rdRatio, tum_count, germ_count]
+            sv_len, record.INFO['CT'],  record.INFO['MAPQ'], split, splitmapq, consensus, pid, alt_AF,  genotypes, rdRatio, tum_count, germ_count]
             bedpe_list.append(out)
             csv_writer.writerow(out)
 

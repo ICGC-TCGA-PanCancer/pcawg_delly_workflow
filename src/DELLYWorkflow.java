@@ -29,11 +29,12 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
     private String somatic_filter;
     private String delly2bed;
+    private String delly_pe_dump;
 
     private String ref_genome_path = "";
     private String ref_genome_gc_path = "";
     
-    private String resultsDirRoot = "results";
+    private String resultsDirRoot = "results/";
     private String resultsDirDelly = "results/delly";
     private String resultsDirJumpy = "results/jumpy";
     private String resultsDirDuppy = "results/duppy";
@@ -93,6 +94,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
       somatic_filter = getProperty("somatic_filter");
       delly2bed = getProperty("delly2bed");
+      delly_pe_dump = getProperty("delly_pe_dump");
 
       ref_genome_path = getProperty("ref_genome_path");
       ref_genome_gc_path = getProperty("ref_genome_gc_path");
@@ -160,6 +162,10 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(gnosInputFileURLGerm);
         downloadJobs.add(gtDownloadJob2);
 
+        //convert provisioned files from soft to hard links
+        Job linkConvert = this.getWorkflow().createBashJob("linkConvert");
+        linkConvert.getCommand().addArgument("find provisionfiles -type l -exec bash -c 'ln -f \"$(readlink -m \"$0\")\" \"$0\"' {} \\;");
+
         
         //prepare output
         
@@ -177,33 +183,44 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         ref_gen_gc_path = this.getFiles().get("ref_gen_gc").getProvisionedPath();
 
         String logFileDelly=resultsDirDelly + "/" + samplePair + ".deletions.log";
-        //String outputFileDelly=resultsDirDelly + "/" + samplePair + ".deletions.vcf";
         String outputFileDelly=resultsDirDelly + "/" + samplePair + ".deletions";
         String outputFileDellyFilter=resultsDirDelly + "/" + samplePair + ".deletions.somatic";
         String outputFileDellyFilterConf=resultsDirDelly + "/" + samplePair + ".deletions.somatic.highConf";
+        String outputFileDellyFilterGerm=resultsDirDelly + "/" + samplePair + ".deletions.germline";
         String outputFileDellyFilterConfGerm=resultsDirDelly + "/" + samplePair + ".deletions.germline.highConf";
         String outputFileDellyDump=resultsDirDelly + "/" + samplePair + ".deletions.pe_dump.txt";
+        String outputFileDellySomaticDump=resultsDirDelly + "/" + samplePair + ".deletions.somatic.readname.txt";
+        String outputFileDellyGermDump=resultsDirDelly + "/" + samplePair + ".deletions.germline.readname.txt";
 
         String logFileDuppy=resultsDirDuppy + "/" + samplePair + ".duplications.log";
         String outputFileDuppy=resultsDirDuppy + "/" + samplePair + ".duplications";
         String outputFileDuppyFilter=resultsDirDuppy + "/" + samplePair + ".duplications.somatic";
         String outputFileDuppyFilterConf=resultsDirDuppy + "/" + samplePair + ".duplications.somatic.highConf";
+        String outputFileDuppyFilterGerm=resultsDirDuppy + "/" + samplePair + ".duplications.germline";
         String outputFileDuppyFilterConfGerm=resultsDirDuppy + "/" + samplePair + ".duplications.germline.highConf";
         String outputFileDuppyDump=resultsDirDuppy + "/" + samplePair + ".duplications.pe_dump.txt";
+        String outputFileDuppySomaticDump=resultsDirDuppy + "/" + samplePair + ".duplications.somatic.readname.txt";
+        String outputFileDuppyGermDump=resultsDirDuppy + "/" + samplePair + ".duplications.germline.readname.txt";
 
         String logFileInvy=resultsDirInvy + "/" + samplePair + ".inversions.log";
         String outputFileInvy=resultsDirInvy + "/" + samplePair + ".inversions";
         String outputFileInvyFilter=resultsDirInvy + "/" + samplePair + ".inversions.somatic";
         String outputFileInvyFilterConf=resultsDirInvy + "/" + samplePair + ".inversions.somatic.highConf";
+        String outputFileInvyFilterGerm=resultsDirInvy + "/" + samplePair + ".inversions.germline";
         String outputFileInvyFilterConfGerm=resultsDirInvy + "/" + samplePair + ".inversions.germline.highConf";
         String outputFileInvyDump=resultsDirInvy + "/" + samplePair + ".inversions.pe_dump.txt";
+        String outputFileInvySomaticDump=resultsDirInvy + "/" + samplePair + ".inversions.somatic.readname.txt";
+        String outputFileInvyGermDump=resultsDirInvy + "/" + samplePair + ".inversions.germline.readname.txt";
 
         String logFileJumpy=resultsDirJumpy + "/" + samplePair + ".translocations.log";
         String outputFileJumpy=resultsDirJumpy + "/" + samplePair + ".translocations";
         String outputFileJumpyFilter=resultsDirJumpy + "/" + samplePair + ".translocations.somatic";
         String outputFileJumpyFilterConf=resultsDirJumpy + "/" + samplePair + ".translocations.somatic.highConf";
+        String outputFileJumpyFilterGerm=resultsDirJumpy + "/" + samplePair + ".translocations.germline";
         String outputFileJumpyFilterConfGerm=resultsDirJumpy + "/" + samplePair + ".translocations.germline.highConf";
         String outputFileJumpyDump=resultsDirJumpy + "/" + samplePair + ".translocations.pe_dump.txt";
+        String outputFileJumpySomaticDump=resultsDirJumpy + "/" + samplePair + ".translocations.somatic.readname.txt";
+        String outputFileJumpyGermDump=resultsDirJumpy + "/" + samplePair + ".translocations.germline.readname.txt";
 
         String outputFileCovGerm1=resultsDirCov + "/" + germName[0] + "_1kb.cov";
         String outputFileCovGerm1Log=resultsDirCov + "/" + germName[0] + "_1kb.log";
@@ -218,7 +235,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String outputFileCovTumor2Log=resultsDirCov + "/" + tumorName[0] + "_10kb.log";
 
         String outputFileCovTumorGcnorm=resultsDirCov + "/" + tumorName[0] + ".gcnorm.cov";
-             
+              
     
         //7 jobs per downloaded BAM pair (DELLY,DUPPY,INVY,JUMPY, 3xCOV)
         
@@ -230,37 +247,35 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument("-q 1")
             .addArgument("-p " + outputFileDellyDump)
             .addArgument("-o " + outputFileDelly + ".vcf")
-
-
             .addArgument(tumorFile)
             .addArgument(germFile)
             .addArgument(" &> " + logFileDelly);
         dellyJob.addParent(downloadJobs.get(0));
         dellyJob.addParent(downloadJobs.get(1));
         
-        Job dellyFilterJob1 = this.getWorkflow().createBashJob("delly_filter_job1");
-        dellyFilterJob1.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDelly + ".vcf")
-            .addArgument("-o " + outputFileDelly + ".bedpe.txt");
-        dellyFilterJob1.addParent(dellyJob);
+        // Job dellyFilterJob1 = this.getWorkflow().createBashJob("delly_filter_job1");
+        // dellyFilterJob1.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDelly + ".vcf")
+        //     .addArgument("-o " + outputFileDelly + ".bedpe.txt");
+        // dellyFilterJob1.addParent(dellyJob);
         
-        Job dellyFilterJob2 = this.getWorkflow().createBashJob("delly_filter_job2");
-        dellyFilterJob2.getCommand().addArgument(somatic_filter)
-            .addArgument("-v " + outputFileDelly + ".vcf")
-            .addArgument("-o " + outputFileDellyFilter + ".vcf");
-        dellyFilterJob2.addParent(dellyJob);
+        // Job dellyFilterJob2 = this.getWorkflow().createBashJob("delly_filter_job2");
+        // dellyFilterJob2.getCommand().addArgument(somatic_filter)
+        //     .addArgument("-v " + outputFileDelly + ".vcf")
+        //     .addArgument("-o " + outputFileDellyFilter + ".vcf");
+        // dellyFilterJob2.addParent(dellyJob);
 
-        Job dellyFilterJob3 = this.getWorkflow().createBashJob("delly_filter_job3");
-        dellyFilterJob3.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDellyFilter + ".vcf")
-            .addArgument("-o " + outputFileDellyFilter + ".bedpe.txt");
-        dellyFilterJob3.addParent(dellyFilterJob2);
+        // Job dellyFilterJob3 = this.getWorkflow().createBashJob("delly_filter_job3");
+        // dellyFilterJob3.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDellyFilter + ".vcf")
+        //     .addArgument("-o " + outputFileDellyFilter + ".bedpe.txt");
+        // dellyFilterJob3.addParent(dellyFilterJob2);
 
-        Job dellyFilterJob4 = this.getWorkflow().createBashJob("delly_filter_job4");
-        dellyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDellyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileDellyFilterConf + ".bedpe.txt");
-        dellyFilterJob4.addParent(dellyFilterJob3);
+        // Job dellyFilterJob4 = this.getWorkflow().createBashJob("delly_filter_job4");
+        // dellyFilterJob4.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDellyFilterConf + ".vcf")
+        //     .addArgument("-o " + outputFileDellyFilterConf + ".bedpe.txt");
+        // dellyFilterJob4.addParent(dellyFilterJob3);
 
 
 
@@ -279,29 +294,29 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         duppyJob.addParent(downloadJobs.get(0));
         duppyJob.addParent(downloadJobs.get(1));
 
-        Job duppyFilterJob1 = this.getWorkflow().createBashJob("duppy_filter_job1");
-        duppyFilterJob1.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDuppy + ".vcf")
-            .addArgument("-o " + outputFileDuppy + ".bedpe.txt");
-        duppyFilterJob1.addParent(duppyJob);
+        // Job duppyFilterJob1 = this.getWorkflow().createBashJob("duppy_filter_job1");
+        // duppyFilterJob1.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDuppy + ".vcf")
+        //     .addArgument("-o " + outputFileDuppy + ".bedpe.txt");
+        // duppyFilterJob1.addParent(duppyJob);
         
-        Job duppyFilterJob2 = this.getWorkflow().createBashJob("duppy_filter_job2");
-        duppyFilterJob2.getCommand().addArgument(somatic_filter)
-            .addArgument("-v " + outputFileDuppy + ".vcf")
-            .addArgument("-o " + outputFileDuppyFilter + ".vcf");
-        duppyFilterJob2.addParent(duppyJob);
+        // Job duppyFilterJob2 = this.getWorkflow().createBashJob("duppy_filter_job2");
+        // duppyFilterJob2.getCommand().addArgument(somatic_filter)
+        //     .addArgument("-v " + outputFileDuppy + ".vcf")
+        //     .addArgument("-o " + outputFileDuppyFilter + ".vcf");
+        // duppyFilterJob2.addParent(duppyJob);
 
-        Job duppyFilterJob3 = this.getWorkflow().createBashJob("duppy_filter_job3");
-        duppyFilterJob3.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDuppyFilter + ".vcf")
-            .addArgument("-o " + outputFileDuppyFilter + ".bedpe.txt");
-        duppyFilterJob3.addParent(duppyFilterJob2);
+        // Job duppyFilterJob3 = this.getWorkflow().createBashJob("duppy_filter_job3");
+        // duppyFilterJob3.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDuppyFilter + ".vcf")
+        //     .addArgument("-o " + outputFileDuppyFilter + ".bedpe.txt");
+        // duppyFilterJob3.addParent(duppyFilterJob2);
 
-        Job duppyFilterJob4 = this.getWorkflow().createBashJob("duppy_filter_job4");
-        duppyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileDuppyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileDuppyFilterConf + ".bedpe.txt");
-        duppyFilterJob4.addParent(duppyFilterJob3);        
+        // Job duppyFilterJob4 = this.getWorkflow().createBashJob("duppy_filter_job4");
+        // duppyFilterJob4.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileDuppyFilterConf + ".vcf")
+        //     .addArgument("-o " + outputFileDuppyFilterConf + ".bedpe.txt");
+        // duppyFilterJob4.addParent(duppyFilterJob3);        
 
 
         //INVY
@@ -318,29 +333,29 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         invyJob.addParent(downloadJobs.get(0));
         invyJob.addParent(downloadJobs.get(1));
 
-         Job invyFilterJob1 = this.getWorkflow().createBashJob("invy_filter_job1");
-        invyFilterJob1.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileInvy + ".vcf")
-            .addArgument("-o " + outputFileInvy + ".bedpe.txt");
-        invyFilterJob1.addParent(invyJob);
+        //  Job invyFilterJob1 = this.getWorkflow().createBashJob("invy_filter_job1");
+        // invyFilterJob1.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileInvy + ".vcf")
+        //     .addArgument("-o " + outputFileInvy + ".bedpe.txt");
+        // invyFilterJob1.addParent(invyJob);
         
-        Job invyFilterJob2 = this.getWorkflow().createBashJob("invy_filter_job2");
-        invyFilterJob2.getCommand().addArgument(somatic_filter)
-            .addArgument("-v " + outputFileInvy + ".vcf")
-            .addArgument("-o " + outputFileInvyFilter + ".vcf");
-        invyFilterJob2.addParent(invyJob);
+        // Job invyFilterJob2 = this.getWorkflow().createBashJob("invy_filter_job2");
+        // invyFilterJob2.getCommand().addArgument(somatic_filter)
+        //     .addArgument("-v " + outputFileInvy + ".vcf")
+        //     .addArgument("-o " + outputFileInvyFilter + ".vcf");
+        // invyFilterJob2.addParent(invyJob);
 
-        Job invyFilterJob3 = this.getWorkflow().createBashJob("invy_filter_job3");
-        invyFilterJob3.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileInvyFilter + ".vcf")
-            .addArgument("-o " + outputFileInvyFilter + ".bedpe.txt");
-        invyFilterJob3.addParent(invyFilterJob2);
+        // Job invyFilterJob3 = this.getWorkflow().createBashJob("invy_filter_job3");
+        // invyFilterJob3.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileInvyFilter + ".vcf")
+        //     .addArgument("-o " + outputFileInvyFilter + ".bedpe.txt");
+        // invyFilterJob3.addParent(invyFilterJob2);
 
-        Job invyFilterJob4 = this.getWorkflow().createBashJob("invy_filter_job4");
-        invyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileInvyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileInvyFilterConf + ".bedpe.txt");
-        invyFilterJob4.addParent(invyFilterJob3);        
+        // Job invyFilterJob4 = this.getWorkflow().createBashJob("invy_filter_job4");
+        // invyFilterJob4.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileInvyFilterConf + ".vcf")
+        //     .addArgument("-o " + outputFileInvyFilterConf + ".bedpe.txt");
+        // invyFilterJob4.addParent(invyFilterJob3);        
 
         
         //JUMPY
@@ -357,29 +372,29 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         jumpyJob.addParent(downloadJobs.get(0));
         jumpyJob.addParent(downloadJobs.get(1));
 
-         Job jumpyFilterJob1 = this.getWorkflow().createBashJob("jumpy_filter_job1");
-        jumpyFilterJob1.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileJumpy + ".vcf")
-            .addArgument("-o " + outputFileJumpy + ".bedpe.txt");
-        jumpyFilterJob1.addParent(jumpyJob);
+        //  Job jumpyFilterJob1 = this.getWorkflow().createBashJob("jumpy_filter_job1");
+        // jumpyFilterJob1.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileJumpy + ".vcf")
+        //     .addArgument("-o " + outputFileJumpy + ".bedpe.txt");
+        // jumpyFilterJob1.addParent(jumpyJob);
         
-        Job jumpyFilterJob2 = this.getWorkflow().createBashJob("jumpy_filter_job2");
-        jumpyFilterJob2.getCommand().addArgument(somatic_filter)
-            .addArgument("-v " + outputFileJumpy + ".vcf")
-            .addArgument("-o " + outputFileJumpyFilter + ".vcf");
-        jumpyFilterJob2.addParent(jumpyJob);
+        // Job jumpyFilterJob2 = this.getWorkflow().createBashJob("jumpy_filter_job2");
+        // jumpyFilterJob2.getCommand().addArgument(somatic_filter)
+        //     .addArgument("-v " + outputFileJumpy + ".vcf")
+        //     .addArgument("-o " + outputFileJumpyFilter + ".vcf");
+        // jumpyFilterJob2.addParent(jumpyJob);
 
-        Job jumpyFilterJob3 = this.getWorkflow().createBashJob("jumpy_filter_job3");
-        jumpyFilterJob3.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileJumpyFilter + ".vcf")
-            .addArgument("-o " + outputFileJumpyFilter + ".bedpe.txt");
-        jumpyFilterJob3.addParent(jumpyFilterJob2);
+        // Job jumpyFilterJob3 = this.getWorkflow().createBashJob("jumpy_filter_job3");
+        // jumpyFilterJob3.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileJumpyFilter + ".vcf")
+        //     .addArgument("-o " + outputFileJumpyFilter + ".bedpe.txt");
+        // jumpyFilterJob3.addParent(jumpyFilterJob2);
 
-        Job jumpyFilterJob4 = this.getWorkflow().createBashJob("jumpy_filter_job4");
-        jumpyFilterJob4.getCommand().addArgument(delly2bed)
-            .addArgument("-v " + outputFileJumpyFilterConf + ".vcf")
-            .addArgument("-o " + outputFileJumpyFilterConf + ".bedpe.txt");
-        jumpyFilterJob4.addParent(jumpyFilterJob3);        
+        // Job jumpyFilterJob4 = this.getWorkflow().createBashJob("jumpy_filter_job4");
+        // jumpyFilterJob4.getCommand().addArgument(delly2bed)
+        //     .addArgument("-v " + outputFileJumpyFilterConf + ".vcf")
+        //     .addArgument("-o " + outputFileJumpyFilterConf + ".bedpe.txt");
+        // jumpyFilterJob4.addParent(jumpyFilterJob3);        
 
 
         //COV + plot jobs
@@ -453,6 +468,9 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String cov_somatic = samplePair + "." + workflowID + "." + currdateStamp + ".cov";
         String delly_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz";
         String delly_bedpe_germline = samplePair + "." + workflowID + "." + currdateStamp + ".germline.bedpe.txt";
+        String delly_log = resultsDirRoot + samplePair + "." + workflowID + "." + currdateStamp + ".log";
+        String delly_somatic_pe_dump = resultsDirRoot  + samplePair + "." + workflowID + "." + currdateStamp + ".somatic.readname.txt";
+        String delly_germline_pe_dump = resultsDirRoot  + samplePair + "." + workflowID + "." + currdateStamp + ".germline.readname.txt";
 
         Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
         prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf" + " " + cov_somatic + " " + resultsDirCov);
