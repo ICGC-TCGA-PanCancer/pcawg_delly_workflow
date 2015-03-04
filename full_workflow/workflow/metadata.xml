@@ -1,0 +1,9 @@
+<bundle version="1.0-SNAPSHOT">
+  <workflow name="DELLY" version="${workflow-version}" seqware_version="${seqware-version}"
+  basedir="${workflow_bundle_dir}/Workflow_Bundle_DELLY/${workflow-version}">
+    <description>${workflow-description}</description>
+    <workflow_class path="${workflow_bundle_dir}/Workflow_Bundle_DELLY/${workflow-version}/classes/io/seqware/DELLYWorkflow.java"/>
+    <config path="${workflow_bundle_dir}/Workflow_Bundle_DELLY/${workflow-version}/config/DELLYWorkflow.ini"/>
+    <requirements compute="single" memory="20M" network="local"  workflow_engine="Oozie" workflow_type="java"/>
+  </workflow>
+</bundle>
