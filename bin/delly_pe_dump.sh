@@ -3,7 +3,7 @@ vcf=$1
 pedump=$2
 bamfile=$3
 
-join -1 1 -2 1 <(zgrep -v '#' $vcf | cut -f 3 | sort -k1,1) <(sed '1d' $pedump) | sed 's/ /\t/g' > ${pedump}.tmp
+join -1 1 -2 1 <(zgrep -v '#' $vcf | cut -f 3 | sort -k1,1 -k2,2n) <(sed '1d' $pedump | sort -k1,1 -k2,2n) | sed 's/ /\t/g' > ${pedump}.tmp
 
 while read ID CHR1 POS1 CHR2 POS2 QUAL
 do
