@@ -21,6 +21,7 @@ RUN pip install pybedtools
 RUN pip install numpy
 RUN pip install docopt
 RUN pip install PyVCF
+RUN pip install samtools
 RUN echo "source(\"http://bioconductor.org/biocLite.R\")" > /tmp/dnacopy; echo "biocLite()" >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 #RUN echo "biocLite()" >> /tmp/dnacopy
 #RUN R CMD BATCH /tmp/dnacopy
