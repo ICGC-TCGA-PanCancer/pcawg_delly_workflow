@@ -1,5 +1,0 @@
-sudo: false
-language: java
-jdk:
-  - oraclejdk7
-script: cd full_workflow &&  mvn -B clean install
