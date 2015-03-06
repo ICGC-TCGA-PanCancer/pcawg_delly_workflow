@@ -1,1 +1,0 @@
-This directory needs a placeholder in git. Otherwise it disappears since it is empty, failing the build. 
