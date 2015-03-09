@@ -434,8 +434,8 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
 
-        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
-        copyResultsJob.getCommand().addArgument(copy_results_bin  + " " + resultsDirRoot + " " + runID);
-        copyResultsJob.addParent(prepareUploadJobGermline);
+        //        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
+        // copyResultsJob.getCommand().addArgument(copy_results_bin  + " " + resultsDirRoot + " " + runID);
+        //  copyResultsJob.addParent(prepareUploadJobGermline);
     }
 }
