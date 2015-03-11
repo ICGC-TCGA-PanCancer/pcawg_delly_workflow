@@ -203,7 +203,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(tumorFile + "/*bam")
             .addArgument(germFile + "/*bam")
             .addArgument(" &> " + logFileDelly);
-        dellyJob.setMaxMemory(6000);
+        dellyJob.setMaxMemory(6000).setThreads(2);
         
         //dellyJob.addParent(downloadJobs.get(0));
         // dellyJob.addParent(downloadJobs.get(1));
