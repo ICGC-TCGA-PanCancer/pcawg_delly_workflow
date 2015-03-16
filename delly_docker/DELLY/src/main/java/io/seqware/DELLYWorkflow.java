@@ -192,7 +192,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
         //7 jobs per downloaded BAM pair (DELLY,DUPPY,INVY,JUMPY, 3xCOV)
 
-        Job dellyJob = this.getWorkflow().createBashJob("delly_job");
+        Job dellyJob = this.getWorkflow().createBashJob("delly_job").setMaxMemory("20000").setThreads(2);
         dellyJob.getCommand().addArgument(delly_bin)
             .addArgument("-t DEL")
             .addArgument("-s 9")
@@ -234,7 +234,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
         //DUPPY
-        Job duppyJob = this.getWorkflow().createBashJob("duppy_job");
+        Job duppyJob = this.getWorkflow().createBashJob("duppy_job").setMaxMemory("16000").setThreads(2);
         duppyJob.getCommand().addArgument(delly_bin)
             .addArgument("-t DUP")
             //.addArgument("-s 9")
@@ -275,7 +275,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
         //INVY
-        Job invyJob = this.getWorkflow().createBashJob("invy_job");
+        Job invyJob = this.getWorkflow().createBashJob("invy_job").setMaxMemory("16000").setThreads(2);
         invyJob.getCommand().addArgument(delly_bin)
             .addArgument("-t INV")
             .addArgument("-q 1")
@@ -315,7 +315,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
         //JUMPY
-        Job jumpyJob = this.getWorkflow().createBashJob("jumpy_job");
+        Job jumpyJob = this.getWorkflow().createBashJob("jumpy_job").setMaxMemory("6000").setThreads(2);
         jumpyJob.getCommand().addArgument(delly_bin)
             .addArgument("-t TRA")
             .addArgument("-q 1")
@@ -354,7 +354,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
         //COV + plot jobs
-        Job covJobGerm1 = this.getWorkflow().createBashJob("cov_job_germ1");
+        Job covJobGerm1 = this.getWorkflow().createBashJob("cov_job_germ1").setMaxMemory("14000").setThreads(2);
         covJobGerm1.getCommand().addArgument(cov_bin)
             .addArgument("-s 1000")
             .addArgument("-o 1000")
@@ -363,7 +363,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(" &> " + outputFileCovGerm1Log);
 
 
-        Job covJobGerm2 = this.getWorkflow().createBashJob("cov_job_germ2");
+        Job covJobGerm2 = this.getWorkflow().createBashJob("cov_job_germ2").setMaxMemory("14000").setThreads(2);
         covJobGerm2.getCommand().addArgument(cov_bin)
             .addArgument("-s 10000")
             .addArgument("-o 10000")
@@ -379,7 +379,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(outputFileCovGermGcnorm);
         covJobGerm3.addParent(covJobGerm2);
 
-        Job covJobTumor1 = this.getWorkflow().createBashJob("cov_job_tumor1");
+        Job covJobTumor1 = this.getWorkflow().createBashJob("cov_job_tumor1").setMaxMemory("14000").setThreads(2);
         covJobTumor1.getCommand().addArgument(cov_bin)
             .addArgument("-s 1000")
             .addArgument("-o 1000")
@@ -388,7 +388,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
             .addArgument(" &> " + outputFileCovTumor1Log);
 
 
-        Job covJobTumor2 = this.getWorkflow().createBashJob("cov_job_tumor2");
+        Job covJobTumor2 = this.getWorkflow().createBashJob("cov_job_tumor2").setMaxMemory("14000").setThreads(2);
         covJobTumor2.getCommand().addArgument(cov_bin)
             .addArgument("-s 10000")
             .addArgument("-o 10000")
@@ -416,6 +416,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         //check results and cleanup
 
         String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String delly_raw = runID + "." + workflowID + "." + currdateStamp + ".vcf.gz";
         String delly_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.vcf.gz";
         String delly_bedpe_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.bedpe.txt";
         String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".cov";
@@ -426,7 +427,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
         String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.readname.txt";
 
        Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-       prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov);
+       prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf");
        prepareUploadJobSomatic.addParent(covJobPlot);
 
         Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
