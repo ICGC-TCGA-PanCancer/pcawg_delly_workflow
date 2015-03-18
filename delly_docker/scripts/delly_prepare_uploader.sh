@@ -16,6 +16,11 @@ BAM=$9
 FILENAME_LOG=${10}
 FILENAME_COV=${11}
 COVDIR=${12}
+DELLY_COMBI_RAW=${13}
+DEL_RAW=${14}
+DUP_RAW=${15}
+INV_RAW=${16}
+TRA_RAW=${17}
 
 OUTDIR=/datastore/
 
@@ -62,6 +67,17 @@ cp ${DELLY_DUMP}* ${OUTDIR}
 
 ## LOG and COV - for somatic calls
 if [[ $# -gt 9 ]];then
+
+
+# combine raw calls
+vcfcombine ${DEL_RAW} ${DUP_RAW} ${INV_RAW} ${TRA_RAW} | grep -vP '^hs37d5|^GL0' | vcf-sort | bgzip > ${DELLY_COMBI_RAW}
+md5sum ${DELLY_COMBI_RAW} | awk '{print $1}' > ${DELLY_COMBI_RAW}.md5
+tabix -p vcf ${DELLY_COMBI_RAW}
+md5sum ${DELLY_COMBI_RAW}.tbi | awk '{print $1}' > ${DELLY_COMBI_RAW}.tbi.md5
+
+cp ${DELLY_COMBI_RAW}* ${OUTDIR}
+
+
 ## log files
 LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
 if [[ ! -z $LOG_COMBI  ]]; then
