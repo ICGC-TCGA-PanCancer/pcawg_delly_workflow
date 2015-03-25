@@ -422,12 +422,12 @@ public void buildWorkflow() {
     String delly_raw = runID + "." + workflowID + "." + currdateStamp + ".sv.vcf.gz";
     String delly_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.vcf.gz";
     String delly_bedpe_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.bedpe.txt";
-    String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".cov";
-    String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.vcf.gz";
+    String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".sv.cov";
+    String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
     String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
-    String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".log";
-    String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
-    String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
+    String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.log";
+    //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
+    //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
    Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
    prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf");
