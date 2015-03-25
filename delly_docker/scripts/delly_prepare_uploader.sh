@@ -81,10 +81,11 @@ cp ${DELLY_COMBI_RAW}* ${OUTDIR}
 ## log files
 LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
 if [[ ! -z $LOG_COMBI  ]]; then
-	DEL_LOG=$(echo $(dirname $DEL)/*log)
-	DUP_LOG=$(echo $(dirname $DUP)/*log)
-	INV_LOG=$(echo $(dirname $INV)/*log)
-	TRA_LOG=$(echo $(dirname $TRA)/*log)
+	#DEL_LOG=$(echo $(dirname $DEL)/*log)
+	DEL_LOG="${DEL/.somatic*/.log}"
+	DUP_LOG="${DUP/.somatic*/.log}"
+	INV_LOG="${INV/.somatic*/.log}"
+	TRA_LOG="${TRA/.somatic*/.log}"
 
 	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG}
 	md5sum ${LOG_COMBI}.tar.gz | awk '{print $1}' > ${LOG_COMBI}.tar.gz.md5
