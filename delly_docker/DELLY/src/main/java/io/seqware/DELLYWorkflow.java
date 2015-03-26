@@ -30,6 +30,8 @@ private String copy_results_bin;
 private String somatic_filter;
 private String delly2bed;
 private String delly_pe_dump;
+private String timing_script;
+private String qc_script;
 
 private String ref_genome_path = "";
 private String ref_genome_gc_path = "";
@@ -76,6 +78,8 @@ try {
   somatic_filter = getProperty("somatic_filter");
   delly2bed = getProperty("delly2bed");
   delly_pe_dump = getProperty("delly_pe_dump");
+  timing_script = getProperty("timing_script");
+  qc_script = getProperty("qc_script");
 
   ref_genome_path = getProperty("ref_genome_path");
   ref_genome_gc_path = getProperty("ref_genome_gc_path");
@@ -444,15 +448,21 @@ public void buildWorkflow() {
     String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
     String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
     String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.log";
+    String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+    String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
     //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
     //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
    Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf");
+   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " 
+    private String timing_script;
+    private String qc_script;+ delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
    prepareUploadJobSomatic.addParent(covJobPlot);
 
     Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
     prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin  + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump +  " " + germFile + "/*bam");
+    private String timing_script;
+    private String qc_script;
     prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
 

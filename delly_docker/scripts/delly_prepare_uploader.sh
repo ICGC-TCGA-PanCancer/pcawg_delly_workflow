@@ -21,6 +21,12 @@ DEL_RAW=${14}
 DUP_RAW=${15}
 INV_RAW=${16}
 TRA_RAW=${17}
+SAMPLEPAIR=${18}
+TIMING_SCRIPT=${19}
+TIME_JSON=${20}
+QC_SCRIPT=${21}
+QC_JSON=${22}
+#TIMING_SCRIPT=delly_pcawg_timing_json.py
 
 OUTDIR=/datastore/
 
@@ -87,7 +93,7 @@ if [[ ! -z $LOG_COMBI  ]]; then
 	INV_LOG="${INV/.somatic*/.log}"
 	TRA_LOG="${TRA/.somatic*/.log}"
 
-	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG}
+	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG} ${COVDIR}/*log
 	md5sum ${LOG_COMBI}.tar.gz | awk '{print $1}' > ${LOG_COMBI}.tar.gz.md5
 	cp ${LOG_COMBI}* ${OUTDIR}
 fi
@@ -105,4 +111,24 @@ if [[ ! -z $COV_COMBI ]]; then
 	md5sum ${COVPLOT_COMBI}.tar.gz | awk '{print $1}' > ${COVPLOT_COMBI}.tar.gz.md5
 	cp ${COVPLOT_COMBI}* ${OUTDIR}
 fi
+
+## timing json
+TIME_OUT=${RESULTSDIR_ROOT}/${TIME_JSON}
+DEL_TIME="${DEL/.deletions*/.delly.time}"
+DUP_TIME="${DEL/.duplications*/.duppy.time}"
+INV_TIME="${DEL/.inversions*/.invy.time}"
+TRA_TIME="${DEL/.translocations*/.jumpy.time}"
+
+python ${TIMING_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_TIME} -b ${DUP_TIME} -c ${INV_TIME} -d ${TRA_TIME} -e ${COVDIR} -o ${TIME_OUT}
+
+## qc json
+QC_OUT=${RESULTSDIR_ROOT}/${QC_JSON}
+DEL_QC="$(dirname ${DEL})"
+DUP_QC="$(dirname ${DUP})"
+INV_QC="$(dirname ${INV})"
+TRA_QC="$(dirname ${TRA})"
+
+python ${QC_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_QC} -b ${DUP_QC} -c ${INV_QC} -d ${TRA_QC} -e ${COVDIR} -o ${QC_OUT}
+
+
 fi
