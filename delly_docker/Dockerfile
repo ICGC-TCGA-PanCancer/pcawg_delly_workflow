@@ -12,7 +12,7 @@ MAINTAINER Ivica Letunic <letunic@biobyte.de>
 USER root
 RUN apt-get -m update
 
-RUN apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential
+RUN apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time
 RUN apt-get install -y python python-dev python-distribute python-pip 
 RUN apt-get install -y r-base r-base-dev
 RUN apt-get install -y tabix cython
