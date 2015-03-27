@@ -85,13 +85,13 @@ cp ${DELLY_COMBI_RAW}* ${OUTDIR}
 
 
 ## log files
-LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
+#LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
+LOG_COMBI=${FILENAME_LOG}
 if [[ ! -z $LOG_COMBI  ]]; then
-	#DEL_LOG=$(echo $(dirname $DEL)/*log)
-	DEL_LOG="${DEL/.somatic*/.log}"
-	DUP_LOG="${DUP/.somatic*/.log}"
-	INV_LOG="${INV/.somatic*/.log}"
-	TRA_LOG="${TRA/.somatic*/.log}"
+	DEL_LOG="$(dirname $DEL)/*log"
+	DUP_LOG="$(dirname $DUP)/*log"
+	INV_LOG="$(dirname $INV)/*log"
+	TRA_LOG="$(dirname $TRA)/*log"
 
 	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG} ${COVDIR}/*log
 	md5sum ${LOG_COMBI}.tar.gz | awk '{print $1}' > ${LOG_COMBI}.tar.gz.md5
@@ -113,16 +113,16 @@ if [[ ! -z $COV_COMBI ]]; then
 fi
 
 ## timing json
-TIME_OUT=${RESULTSDIR_ROOT}/${TIME_JSON}
-DEL_TIME="${DEL/.deletions*/.delly.time}"
-DUP_TIME="${DEL/.duplications*/.duppy.time}"
-INV_TIME="${DEL/.inversions*/.invy.time}"
-TRA_TIME="${DEL/.translocations*/.jumpy.time}"
+TIME_OUT=${TIME_JSON}
+DEL_TIME="$(dirname $DEL)/*delly.time"
+DUP_TIME="$(dirname $DUP)/*duppy.time"
+INV_TIME="$(dirname $INV)/*invy.time"
+TRA_TIME="$(dirname $TRA)/*jumpy.time"
 
 python ${TIMING_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_TIME} -b ${DUP_TIME} -c ${INV_TIME} -d ${TRA_TIME} -e ${COVDIR} -o ${TIME_OUT}
 
 ## qc json
-QC_OUT=${RESULTSDIR_ROOT}/${QC_JSON}
+QC_OUT=${QC_JSON}
 DEL_QC="$(dirname ${DEL})"
 DUP_QC="$(dirname ${DUP})"
 INV_QC="$(dirname ${INV})"
