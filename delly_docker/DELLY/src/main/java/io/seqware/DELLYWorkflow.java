@@ -30,6 +30,8 @@ private String copy_results_bin;
 private String somatic_filter;
 private String delly2bed;
 private String delly_pe_dump;
+private String timing_script;
+private String qc_script;
 
 private String ref_genome_path = "";
 private String ref_genome_gc_path = "";
@@ -76,6 +78,8 @@ try {
   somatic_filter = getProperty("somatic_filter");
   delly2bed = getProperty("delly2bed");
   delly_pe_dump = getProperty("delly_pe_dump");
+  timing_script = getProperty("timing_script");
+  qc_script = getProperty("qc_script");
 
   ref_genome_path = getProperty("ref_genome_path");
   ref_genome_gc_path = getProperty("ref_genome_gc_path");
@@ -142,6 +146,7 @@ public void buildWorkflow() {
 
     String logFileDelly=resultsDirDelly + "/" + runID + ".deletions.log";
     String outputFileDelly=resultsDirDelly + "/" + runID + ".deletions";
+    String outputFileDellyTime=resultsDirDelly + "/" + runID + ".delly.time";    
     String outputFileDellyFilter=resultsDirDelly + "/" + runID + ".deletions.somatic";
     String outputFileDellyFilterConf=resultsDirDelly + "/" + runID + ".deletions.somatic.highConf";
     String outputFileDellyFilterGerm=resultsDirDelly + "/" + runID + ".deletions.germline";
@@ -152,6 +157,7 @@ public void buildWorkflow() {
 
     String logFileDuppy=resultsDirDuppy + "/" + runID + ".duplications.log";
     String outputFileDuppy=resultsDirDuppy + "/" + runID + ".duplications";
+    String outputFileDuppyTime=resultsDirDuppy + "/" + runID + ".duppy.time";    
     String outputFileDuppyFilter=resultsDirDuppy + "/" + runID + ".duplications.somatic";
     String outputFileDuppyFilterConf=resultsDirDuppy + "/" + runID + ".duplications.somatic.highConf";
     String outputFileDuppyFilterGerm=resultsDirDuppy + "/" + runID + ".duplications.germline";
@@ -162,6 +168,7 @@ public void buildWorkflow() {
 
     String logFileInvy=resultsDirInvy + "/" + runID + ".inversions.log";
     String outputFileInvy=resultsDirInvy + "/" + runID + ".inversions";
+    String outputFileInvyTime=resultsDirInvy + "/" + runID + ".invy.time";    
     String outputFileInvyFilter=resultsDirInvy + "/" + runID + ".inversions.somatic";
     String outputFileInvyFilterConf=resultsDirInvy + "/" + runID + ".inversions.somatic.highConf";
     String outputFileInvyFilterGerm=resultsDirInvy + "/" + runID + ".inversions.germline";
@@ -172,6 +179,7 @@ public void buildWorkflow() {
 
     String logFileJumpy=resultsDirJumpy + "/" + runID + ".translocations.log";
     String outputFileJumpy=resultsDirJumpy + "/" + runID + ".translocations";
+    String outputFileJumpyTime=resultsDirJumpy + "/" + runID + ".jumpy.time";
     String outputFileJumpyFilter=resultsDirJumpy + "/" + runID + ".translocations.somatic";
     String outputFileJumpyFilterConf=resultsDirJumpy + "/" + runID + ".translocations.somatic.highConf";
     String outputFileJumpyFilterGerm=resultsDirJumpy + "/" + runID + ".translocations.germline";
@@ -182,21 +190,28 @@ public void buildWorkflow() {
 
     String outputFileCovGerm1=resultsDirCov + "/" + runID + "_germ"  + "_1kb.cov";
     String outputFileCovGerm1Log=resultsDirCov + "/" + runID + "_germ"  + "_1kb.log";
+    String outputFileCovGerm1Time=resultsDirCov + "/" + runID + "_germ"  + "_1kb.time";
+    
     String outputFileCovGerm2=resultsDirCov + "/" + runID + "_germ"  + "_10kb.cov";
     String outputFileCovGerm2Log=resultsDirCov + "/" + runID + "_germ"  + "_10kb.log";
-
+    String outputFileCovGerm2Time=resultsDirCov + "/" + runID + "_germ"  + "_10kb.time";
+    
     String outputFileCovGermGcnorm=resultsDirCov + "/" + runID + "_germ"  + ".gcnorm.cov";
 
     String outputFileCovTumor1=resultsDirCov + "/" + runID + "_tumor"  + "_1kb.cov";
     String outputFileCovTumor1Log=resultsDirCov + "/" + runID + "_tumor"  + "_1kb.log";
+    String outputFileCovTumor1Time=resultsDirCov + "/" + runID + "_tumor"  + "_1kb.time";
     String outputFileCovTumor2=resultsDirCov + "/" + runID + "_tumor"  + "_10kb.cov";
     String outputFileCovTumor2Log=resultsDirCov + "/" + runID + "_tumor"  + "_10kb.log";
+    String outputFileCovTumor2Time=resultsDirCov + "/" + runID + "_tumor"  + "_10kb.time";
+        
     String outputFileCovTumorGcnorm=resultsDirCov + "/" + runID + "_tumor"  + ".gcnorm.cov";
 
     //7 jobs per downloaded BAM pair (DELLY,DUPPY,INVY,JUMPY, 3xCOV)
 
     Job dellyJob = this.getWorkflow().createBashJob("delly_job").setMaxMemory("20000").setThreads(2);
-    dellyJob.getCommand().addArgument(delly_bin)
+    dellyJob.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileDellyTime)
+        .addArgument(delly_bin)
         .addArgument("-t DEL")
         .addArgument("-s 9")
         .addArgument(breakpoint == true ? "-g " + ref_gen_path : " ")
@@ -238,7 +253,8 @@ public void buildWorkflow() {
 
     //DUPPY
     Job duppyJob = this.getWorkflow().createBashJob("duppy_job").setMaxMemory("16000").setThreads(2);
-    duppyJob.getCommand().addArgument(delly_bin)
+    duppyJob.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileDuppyTime)
+        .addArgument(delly_bin)
         .addArgument("-t DUP")
         //.addArgument("-s 9")
         .addArgument(breakpoint == true ? "-g " + ref_gen_path : " ")
@@ -279,7 +295,8 @@ public void buildWorkflow() {
 
     //INVY
     Job invyJob = this.getWorkflow().createBashJob("invy_job").setMaxMemory("16000").setThreads(2);
-    invyJob.getCommand().addArgument(delly_bin)
+    invyJob.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileInvyTime)
+        .addArgument(delly_bin)
         .addArgument("-t INV")
         .addArgument("-q 1")
         .addArgument(breakpoint == true ? "-g " + ref_gen_path : " ")
@@ -319,7 +336,8 @@ public void buildWorkflow() {
 
     //JUMPY
     Job jumpyJob = this.getWorkflow().createBashJob("jumpy_job").setMaxMemory("6000").setThreads(2);
-    jumpyJob.getCommand().addArgument(delly_bin)
+    jumpyJob.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileJumpyTime)
+        .addArgument(delly_bin)
         .addArgument("-t TRA")
         .addArgument("-q 1")
         .addArgument("-p " + outputFileJumpyDump)
@@ -358,7 +376,8 @@ public void buildWorkflow() {
 
     //COV + plot jobs
     Job covJobGerm1 = this.getWorkflow().createBashJob("cov_job_germ1").setMaxMemory("14000").setThreads(2);
-    covJobGerm1.getCommand().addArgument(cov_bin)
+    covJobGerm1.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovGerm1Time)
+        .addArgument(cov_bin)
         .addArgument("-s 1000")
         .addArgument("-o 1000")
         .addArgument(germFile + "/*bam")
@@ -367,7 +386,8 @@ public void buildWorkflow() {
 
 
     Job covJobGerm2 = this.getWorkflow().createBashJob("cov_job_germ2").setMaxMemory("14000").setThreads(2);
-    covJobGerm2.getCommand().addArgument(cov_bin)
+    covJobGerm2.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovGerm2Time)
+        .addArgument(cov_bin)
         .addArgument("-s 10000")
         .addArgument("-o 10000")
         .addArgument(germFile + "/*bam")
@@ -383,7 +403,8 @@ public void buildWorkflow() {
     covJobGerm3.addParent(covJobGerm2);
 
     Job covJobTumor1 = this.getWorkflow().createBashJob("cov_job_tumor1").setMaxMemory("14000").setThreads(2);
-    covJobTumor1.getCommand().addArgument(cov_bin)
+    covJobTumor1.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovTumor1Time)
+        .addArgument(cov_bin)
         .addArgument("-s 1000")
         .addArgument("-o 1000")
         .addArgument(tumorFile + "/*bam")
@@ -392,7 +413,8 @@ public void buildWorkflow() {
 
 
     Job covJobTumor2 = this.getWorkflow().createBashJob("cov_job_tumor2").setMaxMemory("14000").setThreads(2);
-    covJobTumor2.getCommand().addArgument(cov_bin)
+    covJobTumor2.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovTumor2Time)
+        .addArgument(cov_bin)
         .addArgument("-s 10000")
         .addArgument("-o 10000")
         .addArgument(tumorFile + "/*bam")
@@ -426,11 +448,13 @@ public void buildWorkflow() {
     String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
     String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
     String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.log";
+    String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+    String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
     //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
     //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
    Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf");
+   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
    prepareUploadJobSomatic.addParent(covJobPlot);
 
     Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");

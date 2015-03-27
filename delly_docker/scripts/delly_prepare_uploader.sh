@@ -1,8 +1,6 @@
 #!/bin/bash
-
-# $META.sv.vcf.gz
-# $META.sv.vcf.gz.tbi
-# META = Sample ID + Workflow + Date + Type
+# embl-delly pcawg workflow, 2015
+# prepare delly files for upload
 
 DELLY2BED=$1
 RESULTSDIR_ROOT=$2
@@ -21,6 +19,12 @@ DEL_RAW=${14}
 DUP_RAW=${15}
 INV_RAW=${16}
 TRA_RAW=${17}
+SAMPLEPAIR=${18}
+TIMING_SCRIPT=${19}
+TIME_JSON=${20}
+QC_SCRIPT=${21}
+QC_JSON=${22}
+#TIMING_SCRIPT=delly_pcawg_timing_json.py
 
 OUTDIR=/datastore/
 
@@ -79,15 +83,15 @@ cp ${DELLY_COMBI_RAW}* ${OUTDIR}
 
 
 ## log files
-LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
+#LOG_COMBI=${RESULTSDIR_ROOT}/${FILENAME_LOG}
+LOG_COMBI=${FILENAME_LOG}
 if [[ ! -z $LOG_COMBI  ]]; then
-	#DEL_LOG=$(echo $(dirname $DEL)/*log)
-	DEL_LOG="${DEL/.somatic*/.log}"
-	DUP_LOG="${DUP/.somatic*/.log}"
-	INV_LOG="${INV/.somatic*/.log}"
-	TRA_LOG="${TRA/.somatic*/.log}"
+	DEL_LOG="$(dirname $DEL)/*log"
+	DUP_LOG="$(dirname $DUP)/*log"
+	INV_LOG="$(dirname $INV)/*log"
+	TRA_LOG="$(dirname $TRA)/*log"
 
-	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG}
+	tar -cvzf ${LOG_COMBI}.tar.gz ${DEL_LOG} ${DUP_LOG} ${INV_LOG} ${TRA_LOG} ${COVDIR}/*log
 	md5sum ${LOG_COMBI}.tar.gz | awk '{print $1}' > ${LOG_COMBI}.tar.gz.md5
 	cp ${LOG_COMBI}* ${OUTDIR}
 fi
@@ -105,4 +109,22 @@ if [[ ! -z $COV_COMBI ]]; then
 	md5sum ${COVPLOT_COMBI}.tar.gz | awk '{print $1}' > ${COVPLOT_COMBI}.tar.gz.md5
 	cp ${COVPLOT_COMBI}* ${OUTDIR}
 fi
+
+## timing json
+DEL_TIME="$(dirname $DEL)/*delly.time"
+DUP_TIME="$(dirname $DUP)/*duppy.time"
+INV_TIME="$(dirname $INV)/*invy.time"
+TRA_TIME="$(dirname $TRA)/*jumpy.time"
+
+python ${TIMING_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_TIME} -b ${DUP_TIME} -c ${INV_TIME} -d ${TRA_TIME} -e ${COVDIR} -o ${TIME_JSON}
+
+## qc json
+DEL_QC="$(dirname ${DEL})"
+DUP_QC="$(dirname ${DUP})"
+INV_QC="$(dirname ${INV})"
+TRA_QC="$(dirname ${TRA})"
+
+python ${QC_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_QC} -b ${DUP_QC} -c ${INV_QC} -d ${TRA_QC} -e ${COVDIR} -o ${QC_JSON}
+
+
 fi
