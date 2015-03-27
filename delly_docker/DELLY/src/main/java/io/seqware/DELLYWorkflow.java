@@ -454,15 +454,11 @@ public void buildWorkflow() {
     //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
    Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " 
-    private String timing_script;
-    private String qc_script;+ delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
+   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
    prepareUploadJobSomatic.addParent(covJobPlot);
 
     Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
     prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin  + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump +  " " + germFile + "/*bam");
-    private String timing_script;
-    private String qc_script;
     prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
 
