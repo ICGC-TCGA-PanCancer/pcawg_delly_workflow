@@ -1,8 +1,6 @@
 #!/bin/bash
-
-# $META.sv.vcf.gz
-# $META.sv.vcf.gz.tbi
-# META = Sample ID + Workflow + Date + Type
+# embl-delly pcawg workflow, 2015
+# prepare delly files for upload
 
 DELLY2BED=$1
 RESULTSDIR_ROOT=$2
@@ -113,22 +111,20 @@ if [[ ! -z $COV_COMBI ]]; then
 fi
 
 ## timing json
-TIME_OUT=${TIME_JSON}
 DEL_TIME="$(dirname $DEL)/*delly.time"
 DUP_TIME="$(dirname $DUP)/*duppy.time"
 INV_TIME="$(dirname $INV)/*invy.time"
 TRA_TIME="$(dirname $TRA)/*jumpy.time"
 
-python ${TIMING_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_TIME} -b ${DUP_TIME} -c ${INV_TIME} -d ${TRA_TIME} -e ${COVDIR} -o ${TIME_OUT}
+python ${TIMING_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_TIME} -b ${DUP_TIME} -c ${INV_TIME} -d ${TRA_TIME} -e ${COVDIR} -o ${TIME_JSON}
 
 ## qc json
-QC_OUT=${QC_JSON}
 DEL_QC="$(dirname ${DEL})"
 DUP_QC="$(dirname ${DUP})"
 INV_QC="$(dirname ${INV})"
 TRA_QC="$(dirname ${TRA})"
 
-python ${QC_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_QC} -b ${DUP_QC} -c ${INV_QC} -d ${TRA_QC} -e ${COVDIR} -o ${QC_OUT}
+python ${QC_SCRIPT} -s ${SAMPLEPAIR} -a ${DEL_QC} -b ${DUP_QC} -c ${INV_QC} -d ${TRA_QC} -e ${COVDIR} -o ${QC_JSON}
 
 
 fi
