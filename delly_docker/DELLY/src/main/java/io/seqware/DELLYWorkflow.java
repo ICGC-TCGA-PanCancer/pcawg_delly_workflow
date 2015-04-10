@@ -448,8 +448,11 @@ public void buildWorkflow() {
     String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
     String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
     String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.log";
-    String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
-    String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
+    //String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+    //String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
+    // these should actually be written to the output directory so they are easier for the submitter to find
+    String delly_time = runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+    String delly_qc  = runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
     //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
     //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
