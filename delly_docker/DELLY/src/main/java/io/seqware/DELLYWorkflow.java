@@ -447,7 +447,7 @@ public void buildWorkflow() {
     String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".sv.cov";
     String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
     String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
-    String delly_log = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.log";
+    String delly_log = runID + "." + workflowID + "." + currdateStamp + ".sv.log";
     //String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
     //String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
     // these should actually be written to the output directory so they are easier for the submitter to find
