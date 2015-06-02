@@ -4,7 +4,7 @@
 ############################################################
 
 # Set the base image to Ubuntu
-FROM seqware/seqware_full
+FROM seqware/seqware_whitestar:1.1.1
 
 # File Author / Maintainer
 MAINTAINER Ivica Letunic <letunic@biobyte.de>
