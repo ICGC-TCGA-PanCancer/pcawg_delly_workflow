@@ -16,6 +16,7 @@ public class DELLYWorkflow extends AbstractWorkflowDataModel {
 
 
 private boolean breakpoint=false;
+private boolean multitumor=false;
 private String delly_bin;
 private String cov_bin;
 private String cov_plot;
@@ -58,6 +59,10 @@ try {
   if (hasPropertyAndNotNull("breakpoint")) {
       breakpoint = Boolean.valueOf(getProperty("breakpoint"));
   }
+  if (hasPropertyAndNotNull("multitumor")) {
+      multitumor = Boolean.valueOf(getProperty("multitumor"));
+  }
+  
   inputBamPathTumor = getProperty("input_bam_path_tumor");
   inputBamPathGerm = getProperty("input_bam_path_germ");
 
@@ -421,22 +426,21 @@ public void buildWorkflow() {
         .addArgument("-f " + outputFileCovTumor2)
         .addArgument(" &> " + outputFileCovTumor2Log);
 
+    if (multitumor == false) {
+        Job covJobTumor3 = this.getWorkflow().createBashJob("cov_job_tumor3");
+        covJobTumor3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
+            .addArgument(outputFileCovTumor2)
+            .addArgument(ref_gen_gc_path)
+            .addArgument(outputFileCovTumorGcnorm);
+        covJobTumor3.addParent(covJobTumor2);
 
-    Job covJobTumor3 = this.getWorkflow().createBashJob("cov_job_tumor3");
-    covJobTumor3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
-        .addArgument(outputFileCovTumor2)
-        .addArgument(ref_gen_gc_path)
-        .addArgument(outputFileCovTumorGcnorm);
-    covJobTumor3.addParent(covJobTumor2);
-
-
-    Job covJobPlot = this.getWorkflow().createBashJob("cov_job_plot");
-    covJobPlot.getCommand().addArgument(cov_plot  + " " + outputFileCovGermGcnorm)
-        .addArgument(outputFileCovTumorGcnorm)
-        .addArgument(resultsDirCovPlot);
-    covJobPlot.addParent(covJobGerm3);
-    covJobPlot.addParent(covJobTumor3);
-
+        Job covJobPlot = this.getWorkflow().createBashJob("cov_job_plot");
+        covJobPlot.getCommand().addArgument(cov_plot  + " " + outputFileCovGermGcnorm)
+            .addArgument(outputFileCovTumorGcnorm)
+            .addArgument(resultsDirCovPlot);
+        covJobPlot.addParent(covJobGerm3);
+        covJobPlot.addParent(covJobTumor3);
+    }
 
     //check results and cleanup
 
