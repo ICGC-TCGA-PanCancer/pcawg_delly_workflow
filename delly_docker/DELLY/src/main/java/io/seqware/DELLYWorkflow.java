@@ -399,13 +399,14 @@ public void buildWorkflow() {
         .addArgument("-f " + outputFileCovGerm2)
         .addArgument(" &> " + outputFileCovGerm2Log);
 
-
-    Job covJobGerm3 = this.getWorkflow().createBashJob("cov_job_germ3");
-    covJobGerm3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
-        .addArgument(outputFileCovGerm2)
-        .addArgument(ref_gen_gc_path)
-        .addArgument(outputFileCovGermGcnorm);
-    covJobGerm3.addParent(covJobGerm2);
+    if (multitumor == false) {
+        Job covJobGerm3 = this.getWorkflow().createBashJob("cov_job_germ3");
+        covJobGerm3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
+            .addArgument(outputFileCovGerm2)
+            .addArgument(ref_gen_gc_path)
+            .addArgument(outputFileCovGermGcnorm);
+        covJobGerm3.addParent(covJobGerm2);
+    }
 
     Job covJobTumor1 = this.getWorkflow().createBashJob("cov_job_tumor1").setMaxMemory("14000").setThreads(2);
     covJobTumor1.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovTumor1Time)
