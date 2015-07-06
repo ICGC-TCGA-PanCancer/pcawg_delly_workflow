@@ -1,2 +1,4 @@
 #!/bin/bash
-/usr/bin/delly_v0.6.3_parallel_linux_x86_64bit $@
+#/usr/bin/delly_v0.6.3_parallel_linux_x86_64bit $@
+/usr/bin/delly_v0.6.6_parallel_linux_x86_64bit $@
+
