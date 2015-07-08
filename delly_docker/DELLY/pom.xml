@@ -9,7 +9,7 @@
 
     <groupId>io.seqware</groupId>
     <artifactId>DELLY</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>jar</packaging>
 
     <name>DELLY</name>
@@ -18,7 +18,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <seqware-version>1.1.0-alpha.6</seqware-version>
+        <seqware-version>1.1.0</seqware-version>
         <skipITs>true</skipITs>
         <workflow-full-name>Workflow_Bundle_DELLY_${workflow-version}_SeqWare_${seqware-version}</workflow-full-name>
         <workflow-dir>${project.build.directory}/${workflow-full-name}/Workflow_Bundle_DELLY/${workflow-version}</workflow-dir>
@@ -28,21 +28,6 @@
         <dependency>
             <groupId>io.seqware</groupId>
             <artifactId>seqware-bin-linux-x86-64-jre-7.0.51</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.seqware</groupId>
-            <artifactId>seqware-bin-linux-x86-64-cat-5.67</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.seqware</groupId>
-            <artifactId>seqware-bin-linux-x86-64-echo-5.67</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.seqware</groupId>
-            <artifactId>seqware-bin-linux-x86-64-perl-5.14.1</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
