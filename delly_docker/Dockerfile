@@ -26,4 +26,4 @@ RUN chown -R seqware /home/seqware/DELLY
 USER seqware
 WORKDIR /home/seqware/DELLY/
 RUN mvn clean install
-CMD ["/bin/bash", "/start.sh"]
+CMD ["/bin/bash"]
