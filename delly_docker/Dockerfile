@@ -20,6 +20,7 @@ RUN pip install pybedtools numpy docopt PyVCF
 RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 -O - |tar -xj -C /tmp/; cd /tmp/samtools-1.2; make; make install
 #RUN echo "source(\"http://bioconductor.org/biocLite.R\")" > /tmp/dnacopy; echo "biocLite()" >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 COPY scripts/* /usr/bin/
+RUN cd scripts && for i in *; do chmod a+rwx /usr/bin/$i; done;
 RUN echo 'install.packages("/usr/bin/DNAcopy_1.38.1.tar.gz")' >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 COPY DELLY /home/seqware/DELLY
 RUN chown -R seqware /home/seqware/DELLY
