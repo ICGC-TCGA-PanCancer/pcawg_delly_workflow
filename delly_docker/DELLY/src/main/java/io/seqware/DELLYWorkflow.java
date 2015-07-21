@@ -133,14 +133,29 @@ public void buildWorkflow() {
     String ref_gen_path = " ";
     String ref_gen_gc_path = " ";
 
+    // make a new tumor directory
+    Job tumorLinkJob = this.getWorkflow().createBashJob("tumor_link_job").setMaxMemory("5000").setThreads(1);
+    tumorLinkJob.getCommand().addArgument("mkdir -p "+datastore+"/delly_tumor_bams \n ");
+
+    // deal with multi-tumor, in which case the input_bam_path_tumor key value is comma-separated
+    String[] tumorFileArr = inputBamPathTumor.split(",");
+
+    // if this is true there are multiple tumors so hard link to new location
+    if (tumorFileArr.length < 1) {
+        throw new RuntimeException("THE TUMOR BAM ARRAY IS < 1");
+    } else if (tumorFileArr.length == 1) {
+        tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bam "+datastore+"/delly_tumor_bams/0.bam && sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bai && "+datastore+"/delly_tumor_bams/0.bai \n ");
+    } else {
+        for (int i=0; i<tumorFileArr.length; i++) {
+            tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bam "+datastore+"/delly_tumor_bams/"+i+".bam && sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bai "+datastore+"/delly_tumor_bams/"+i+".bai \n ");
+        }
+    }
 
     //prepare output IDs
 
-    String tumorFile = datastore + inputBamPathTumor;
+    //String tumorFile = datastore + inputBamPathTumor;
+    String tumorFile = datastore + "/delly_tumor_bams";
     String germFile = datastore + inputBamPathGerm;
-
-    String[] tumorName = tumorFile.split("/");
-    String[] germName = germFile.split("/");
 
     ref_gen_path = ref_genome_path;
     ref_gen_gc_path = ref_genome_gc_path;
@@ -222,6 +237,9 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument(germFile + "/*bam")
         .addArgument(" &> " + logFileDelly);
+
+    // add the tumorLinkJob job
+    dellyJob.addParent(tumorLinkJob);
 
     //dellyJob.addParent(downloadJobs.get(0));
     // dellyJob.addParent(downloadJobs.get(1));
