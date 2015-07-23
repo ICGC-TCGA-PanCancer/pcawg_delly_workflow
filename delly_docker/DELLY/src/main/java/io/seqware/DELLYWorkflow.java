@@ -1,14 +1,12 @@
 package io.seqware;
 
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.sourceforge.seqware.pipeline.workflowV2.AbstractWorkflowDataModel;
 import net.sourceforge.seqware.pipeline.workflowV2.model.Job;
 import net.sourceforge.seqware.pipeline.workflowV2.model.SqwFile;
-import java.util.Date;
-import java.util.Calendar;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -52,6 +50,8 @@ String workflowID = null;
 String inputBamPathTumor = null;
 String inputBamPathGerm = null;
 
+String[] runIDs = null;
+
 private void init() {
 try {
 
@@ -62,7 +62,11 @@ try {
   inputBamPathTumor = getProperty("input_bam_path_tumor");
   inputBamPathGerm = getProperty("input_bam_path_germ");
 
+  // I'm just going to use the first UUID and later make copies named for each
   runID = getProperty("delly_runID");
+  runIDs = runID.split(",");
+  runID = runIDs[0];
+
   currdateStamp = getProperty("date");
   datastore = getProperty("datastore");
 
@@ -107,25 +111,6 @@ public void setupDirectory() {
 
 }
 
-@Override
-public Map<String, SqwFile> setupFiles() {
-  try {
-      //          if (breakpoint == true) {
-          //             SqwFile ref_genome = this.createFile("ref_gen");
-      //  ref_genome.setSourcePath(ref_genome_path);
-      //    ref_genome.setIsInput(true);
-      // }
-      // SqwFile ref_genome_gc = this.createFile("ref_gen_gc");
-      // ref_genome_gc.setSourcePath(ref_genome_gc_path);
-      //ref_genome_gc.setIsInput(true);
-
-  } catch (Exception ex) {
-    ex.printStackTrace();
-    throw new RuntimeException(ex);
-  }
-  return this.getFiles();
-}
-
 
 @Override
 public void buildWorkflow() {
@@ -133,14 +118,29 @@ public void buildWorkflow() {
     String ref_gen_path = " ";
     String ref_gen_gc_path = " ";
 
+    // make a new tumor directory
+    Job tumorLinkJob = this.getWorkflow().createBashJob("tumor_link_job").setMaxMemory("5000").setThreads(1);
+    tumorLinkJob.getCommand().addArgument("mkdir -p "+datastore+"/delly_tumor_bams \n ");
+
+    // deal with multi-tumor, in which case the input_bam_path_tumor key value is comma-separated
+    String[] tumorFileArr = inputBamPathTumor.split(",");
+
+    // if this is true there are multiple tumors so hard link to new location
+    if (tumorFileArr.length < 1) {
+        throw new RuntimeException("THE TUMOR BAM ARRAY IS < 1");
+    } else if (tumorFileArr.length == 1) {
+        tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bam "+datastore+"/delly_tumor_bams/0.bam && sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bai "+datastore+"/delly_tumor_bams/0.bam.bai \n ");
+    } else {
+        for (int i=0; i<tumorFileArr.length; i++) {
+            tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bam "+datastore+"/delly_tumor_bams/"+i+".bam && sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bai "+datastore+"/delly_tumor_bams/"+i+".bam.bai \n ");
+        }
+    }
 
     //prepare output IDs
 
-    String tumorFile = datastore + inputBamPathTumor;
+    //String tumorFile = datastore + inputBamPathTumor;
+    String tumorFile = datastore + "/delly_tumor_bams";
     String germFile = datastore + inputBamPathGerm;
-
-    String[] tumorName = tumorFile.split("/");
-    String[] germName = germFile.split("/");
 
     ref_gen_path = ref_genome_path;
     ref_gen_gc_path = ref_genome_gc_path;
@@ -222,6 +222,9 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument(germFile + "/*bam")
         .addArgument(" &> " + logFileDelly);
+
+    // add the tumorLinkJob job
+    dellyJob.addParent(tumorLinkJob);
 
     //dellyJob.addParent(downloadJobs.get(0));
     // dellyJob.addParent(downloadJobs.get(1));
@@ -438,34 +441,47 @@ public void buildWorkflow() {
         covJobPlot.addParent(covJobTumor3);
 
     //check results and cleanup
+    // loop over all outputs
 
-    //String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
-    String delly_raw = runID + "." + workflowID + "." + currdateStamp + ".sv.vcf.gz";
-    String delly_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.vcf.gz";
-    String delly_bedpe_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.bedpe.txt";
-    String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".sv.cov";
-    String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
-    String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
-    String delly_log = runID + "." + workflowID + "." + currdateStamp + ".sv.log";
-    //String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
-    //String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
-    // these should actually be written to the output directory so they are easier for the submitter to find
-    String delly_time = runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
-    String delly_qc  = runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
-    //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
-    //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
+    for (int i=0; i<runIDs.length; i++) {
 
-   Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-   prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed  + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf "  + delly_pe_dump +  " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
-   prepareUploadJobSomatic.addParent(covJobPlot);
+        String runID = runIDs[i];
 
-    Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
-    prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin  + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump +  " " + germFile + "/*bam");
-    prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
+        //String currdateStamp = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
+        String delly_raw = runID + "." + workflowID + "." + currdateStamp + ".sv.vcf.gz";
+        String delly_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.vcf.gz";
+        String delly_bedpe_somatic = runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.bedpe.txt";
+        String cov_somatic = runID + "." + workflowID + "." + currdateStamp + ".sv.cov";
+        String delly_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.vcf.gz";
+        String delly_bedpe_germline = runID + "." + workflowID + "." + currdateStamp + ".germline.sv.bedpe.txt";
+        String delly_log = runID + "." + workflowID + "." + currdateStamp + ".sv.log";
+        //String delly_time = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+        //String delly_qc  = resultsDirRoot + runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
+        // these should actually be written to the output directory so they are easier for the submitter to find
+        String delly_time = runID + "." + workflowID + "." + currdateStamp + ".sv.timing.json";
+        String delly_qc = runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
+        //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
+        //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
+
+        Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
+        if (i>0) {
+            prepareUploadJobSomatic.getCommand().addArgument("for i in "+runIDs[0]+".*; do outfile=${i//"+runIDs[0]+"/"+runIDs[i]+"}; cp $i $outfile; done; \n");
+        }
+        prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf " + delly_pe_dump + " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
+        prepareUploadJobSomatic.addParent(covJobPlot);
+
+        Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
+        prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump + " " + germFile + "/*bam");
+        prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
 
 
-    //        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
-    // copyResultsJob.getCommand().addArgument(copy_results_bin  + " " + resultsDirRoot + " " + runID);
-    //  copyResultsJob.addParent(prepareUploadJobGermline);
+        //        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
+        // copyResultsJob.getCommand().addArgument(copy_results_bin  + " " + resultsDirRoot + " " + runID);
+        //  copyResultsJob.addParent(prepareUploadJobGermline);
+
+        // finally, for multi-tumor just make some identical files so the DKFZ step doesn't fail
+
+    }
+
 }
 }

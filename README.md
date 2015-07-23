@@ -14,6 +14,10 @@ DELLY is an integrated structural variant prediction method that can detect dele
 
 Genome-wide coverage analysis and Depth of Coverage plotting, comparing tumor-normal
 
+## Building
+
+    docker build -t pancancer/pcawg-delly-workflow . 
+
 ## See Also
 
 These resources are based on a mirror of the original [bitbucket repository](https://bitbucket.org/weischen/pcawg-delly-workflow) on [Github](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow)
