@@ -129,10 +129,10 @@ public void buildWorkflow() {
     if (tumorFileArr.length < 1) {
         throw new RuntimeException("THE TUMOR BAM ARRAY IS < 1");
     } else if (tumorFileArr.length == 1) {
-        tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bam "+datastore+"/delly_tumor_bams/0.bam && sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bai "+datastore+"/delly_tumor_bams/0.bai \n ");
+        tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bam "+datastore+"/delly_tumor_bams/0.bam && sudo ln "+datastore+"/"+tumorFileArr[0]+"/*.bai "+datastore+"/delly_tumor_bams/0.bam.bai \n ");
     } else {
         for (int i=0; i<tumorFileArr.length; i++) {
-            tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bam "+datastore+"/delly_tumor_bams/"+i+".bam && sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bai "+datastore+"/delly_tumor_bams/"+i+".bai \n ");
+            tumorLinkJob.getCommand().addArgument("sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bam "+datastore+"/delly_tumor_bams/"+i+".bam && sudo ln "+datastore+"/"+tumorFileArr[i]+"/*.bai "+datastore+"/delly_tumor_bams/"+i+".bam.bai \n ");
         }
     }
 
