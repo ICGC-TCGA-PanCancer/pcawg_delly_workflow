@@ -440,8 +440,11 @@ public void buildWorkflow() {
         covJobPlot.addParent(covJobGerm3);
         covJobPlot.addParent(covJobTumor3);
 
-    //check results and cleanup
+    // check results and cleanup
     // loop over all outputs
+    // these are the first two jobs (and only jobs if a single tumor)
+    Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic_0");
+    Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline_0");
 
     for (int i=0; i<runIDs.length; i++) {
 
@@ -463,23 +466,22 @@ public void buildWorkflow() {
         //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
         //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
 
-        Job prepareUploadJobSomatic = this.getWorkflow().createBashJob("prepare_upload_job_somatic");
-        if (i>0) {
-            prepareUploadJobSomatic.getCommand().addArgument("for i in "+runIDs[0]+".*; do outfile=${i//"+runIDs[0]+"/"+runIDs[i]+"}; cp $i $outfile; done; \n");
+        if (i==0) {
+            prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf " + delly_pe_dump + " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
+            prepareUploadJobSomatic.addParent(covJobPlot);
+            prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump + " " + germFile + "/*bam");
+            prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
+        } else {
+            // finally, for multi-tumor just make some identical files so the DKFZ step doesn't fail
+            Job copyFiles = this.getWorkflow().createBashJob("copy_output_job_"+i);
+            prepareUploadJobSomatic.getCommand().addArgument("for i in "+datastore+"/"+runIDs[0]+".*; do outfile=${i//"+runIDs[0]+"/"+runIDs[i]+"}; cp $i $outfile; done; \n");
+            copyFiles.addParent(prepareUploadJobSomatic);
+            copyFiles.addParent(prepareUploadJobGermline);
         }
-        prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf " + delly_pe_dump + " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
-        prepareUploadJobSomatic.addParent(covJobPlot);
-
-        Job prepareUploadJobGermline = this.getWorkflow().createBashJob("prepare_upload_job_germline");
-        prepareUploadJobGermline.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_germline + " " + outputFileDellyFilterConfGerm + ".vcf" + " " + outputFileDuppyFilterConfGerm + ".vcf" + " " + outputFileInvyFilterConfGerm + ".vcf" + " " + outputFileJumpyFilterConfGerm + ".vcf " + delly_pe_dump + " " + germFile + "/*bam");
-        prepareUploadJobGermline.addParent(prepareUploadJobSomatic);
-
 
         //        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
         // copyResultsJob.getCommand().addArgument(copy_results_bin  + " " + resultsDirRoot + " " + runID);
         //  copyResultsJob.addParent(prepareUploadJobGermline);
-
-        // finally, for multi-tumor just make some identical files so the DKFZ step doesn't fail
 
     }
 
