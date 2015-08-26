@@ -16,7 +16,7 @@ Genome-wide coverage analysis and Depth of Coverage plotting, comparing tumor-no
 
 ## Building
 
-    docker build -t pancancer/pcawg-delly-workflow:1.3 . 
+    docker build -t pancancer/pcawg-delly-workflow:1.4 . 
 
 ## See Also
 

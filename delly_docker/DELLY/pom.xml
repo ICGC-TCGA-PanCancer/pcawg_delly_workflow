@@ -9,7 +9,7 @@
 
     <groupId>io.seqware</groupId>
     <artifactId>DELLY</artifactId>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <name>DELLY</name>
@@ -85,7 +85,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-      
+
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -200,9 +200,9 @@
                             <outputDirectory>${workflow-dir}/bin</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
-                            
+
                             <excludeScope>provided</excludeScope>
-                            
+
                         </configuration>
                     </execution>
                 </executions>
