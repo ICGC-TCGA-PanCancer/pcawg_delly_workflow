@@ -465,7 +465,7 @@ public void buildWorkflow() {
         String delly_qc = runID + "." + workflowID + "." + currdateStamp + ".sv.qc.json";
         //String delly_somatic_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".somatic.sv.readname.txt";
         //String delly_germline_pe_dump = resultsDirRoot  + runID + "." + workflowID + "." + currdateStamp + ".germline.sv.readname.txt";
-
+        
         if (i==0) {
             prepareUploadJobSomatic.getCommand().addArgument(prepare_uploader_bin + " " + delly2bed + " " + resultsDirRoot + " " + delly_somatic + " " + outputFileDellyFilterConf + ".vcf" + " " + outputFileDuppyFilterConf + ".vcf" + " " + outputFileInvyFilterConf + ".vcf" + " " + outputFileJumpyFilterConf + ".vcf " + delly_pe_dump + " " + tumorFile + "/*bam" + " " + delly_log + " " + cov_somatic + " " + resultsDirCov + " " + delly_raw + " " + outputFileDelly + ".vcf" + " " + outputFileDuppy + ".vcf" + " " + outputFileInvy + ".vcf" + " " + outputFileJumpy + ".vcf" + " " + runID + " " + timing_script + " " + delly_time + " " + qc_script + " " + delly_qc);
             prepareUploadJobSomatic.addParent(covJobPlot);
@@ -477,6 +477,7 @@ public void buildWorkflow() {
             prepareUploadJobSomatic.getCommand().addArgument("for i in "+datastore+"/"+runIDs[0]+".*; do outfile=${i//"+runIDs[0]+"/"+runIDs[i]+"}; cp $i $outfile; done; \n");
             copyFiles.addParent(prepareUploadJobSomatic);
             copyFiles.addParent(prepareUploadJobGermline);
+
         }
 
         //        Job copyResultsJob = this.getWorkflow().createBashJob("copy_results_job");
