@@ -268,7 +268,7 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument(germFile + "/*bam")
         .addArgument(" &> " + logFileDuppy);
-
+    duppyJob.addParrent(tumorLinkJob);
     //        duppyJob.addParent(downloadJobs.get(0));
     // duppyJob.addParent(downloadJobs.get(1));
 
@@ -309,7 +309,7 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument(germFile + "/*bam")
         .addArgument(" &> " + logFileInvy);
-
+    invyJob.addParrent(tumorLinkJob);
     //        invyJob.addParent(downloadJobs.get(0));
     //        invyJob.addParent(downloadJobs.get(1));
 
@@ -349,7 +349,7 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument(germFile + "/*bam")
         .addArgument(" &> " + logFileJumpy);
-
+    jumpyJob.addParrent(tumorLinkJob);
     //        jumpyJob.addParent(downloadJobs.get(0));
     //        jumpyJob.addParent(downloadJobs.get(1));
 
@@ -387,7 +387,7 @@ public void buildWorkflow() {
         .addArgument(germFile + "/*bam")
         .addArgument("-f " + outputFileCovGerm1)
         .addArgument(" &> " + outputFileCovGerm1Log);
-
+    covJobGerm1.addParrent(tumorLinkJob);
 
     Job covJobGerm2 = this.getWorkflow().createBashJob("cov_job_germ2").setMaxMemory("14000").setThreads(2);
     covJobGerm2.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovGerm2Time)
@@ -397,14 +397,15 @@ public void buildWorkflow() {
         .addArgument(germFile + "/*bam")
         .addArgument("-f " + outputFileCovGerm2)
         .addArgument(" &> " + outputFileCovGerm2Log);
-
+    covJobGerm2.addParrent(tumorLinkJob);
+    
         Job covJobGerm3 = this.getWorkflow().createBashJob("cov_job_germ3");
         covJobGerm3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
             .addArgument(outputFileCovGerm2)
             .addArgument(ref_gen_gc_path)
             .addArgument(outputFileCovGermGcnorm);
         covJobGerm3.addParent(covJobGerm2);
-
+        
 
     Job covJobTumor1 = this.getWorkflow().createBashJob("cov_job_tumor1").setMaxMemory("14000").setThreads(2);
     covJobTumor1.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovTumor1Time)
@@ -414,7 +415,7 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument("-f " + outputFileCovTumor1)
         .addArgument(" &> " + outputFileCovTumor1Log);
-
+    covJobTumor1.addParrent(tumorLinkJob);
 
     Job covJobTumor2 = this.getWorkflow().createBashJob("cov_job_tumor2").setMaxMemory("14000").setThreads(2);
     covJobTumor2.getCommand().addArgument("/usr/bin/time --format=\"Wall_s %e\\nUser_s %U\\nSystem_s %S\\nMax_kb %M\" --output=" + outputFileCovTumor2Time)
@@ -424,7 +425,7 @@ public void buildWorkflow() {
         .addArgument(tumorFile + "/*bam")
         .addArgument("-f " + outputFileCovTumor2)
         .addArgument(" &> " + outputFileCovTumor2Log);
-
+    covJobTumor2.addParrent(tumorLinkJob);
 
         Job covJobTumor3 = this.getWorkflow().createBashJob("cov_job_tumor3");
         covJobTumor3.getCommand().addArgument(rscript_bin  + " " + gcnorm_r)
