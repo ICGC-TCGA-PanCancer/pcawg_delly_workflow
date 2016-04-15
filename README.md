@@ -1,3 +1,5 @@
+![Alt text](img/PCAWG-final-small.png "Optional title")
+
 # DELLY Workflow for PanCancer Analysis of Whole Genomes (PCAWG)
 
 [![Build Status](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow.svg?branch=master)](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow) [![Docker Repository on Quay](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow/status "Docker Repository on Quay")](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow)
@@ -19,7 +21,7 @@ Genome-wide coverage analysis and Depth of Coverage plotting, comparing tumor-no
 Email Brian if you have questions.  Joachim was the primary author.
 
 * Joachim Weischenfeldt (primary workflow author) <joachim.weischenfeldt@embl.de>
-* Ivica Letunic (Dockerfile) <letunic@biobyte.de> 
+* Ivica Letunic (Dockerfile) <letunic@biobyte.de>
 * Brian O'Connor <briandoconnor@gmail.com>
 * Solomon Shorser <Solomon.Shorser@oicr.on.ca>
 
