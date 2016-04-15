@@ -1,6 +1,4 @@
-# ![Alt text](img/PCAWG-final-small.png "Optional title")
-
-# PCAWG DELLY Workflow
+# ![Alt text](img/PCAWG-final-small.png "Optional title") PCAWG DELLY Workflow
 
 [![Build Status](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow.svg?branch=master)](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow) [![Docker Repository on Quay](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow/status "Docker Repository on Quay")](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow)
 
