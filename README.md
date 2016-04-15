@@ -18,9 +18,10 @@ Genome-wide coverage analysis and Depth of Coverage plotting, comparing tumor-no
 
 Email Brian if you have questions.  Joachim was the primary author.
 
-* Joachim Weischenfeldt (primary author)
+* Joachim Weischenfeldt (primary workflow author) <joachim.weischenfeldt@embl.de>
+* Ivica Letunic (Dockerfile) <letunic@biobyte.de> 
 * Brian O'Connor <briandoconnor@gmail.com>
-* Solomon Shorser
+* Solomon Shorser <Solomon.Shorser@oicr.on.ca>
 
 ## Building
 
