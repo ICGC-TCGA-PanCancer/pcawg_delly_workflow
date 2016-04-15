@@ -1,14 +1,24 @@
 #!/usr/bin/env cwl-runner
 
 class: CommandLineTool
+id: "Seqware-Delly-Workflow"
+label: "Seqware-Delly-Workflow"
 
 description: |
-    The Delly workflow from the ICGC PanCancer Analysis of Whole Genomes (PCAWG) project.
-    For more information see the PCAWG project [page](https://dcc.icgc.org/pcawg) and our GitHub 
-    [page](https://github.com/ICGC-TCGA-PanCancer) for our code including the source for 
+    ![pcawg logo](https://dcc.icgc.org/styles/images/PCAWG-final-small.png "pcawg logo")
+    #PCAWG DELLY Workflow
+    The DELLY workflow from the ICGC PanCancer Analysis of Whole Genomes (PCAWG) project. For more information see the PCAWG project [page](https://dcc.icgc.org/pcawg) and our GitHub
+    [page](https://github.com/ICGC-TCGA-PanCancer) for our code including the source for
     [this workflow](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).
     ```
-    Usage: workflow-pcawg-delly-variant-calling --file unaligned_bam [--file unaligned_bam]
+    Usage:
+    # fetch CWL
+    $> dockstore cwl --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 > Dockstore.cwl
+    # make a runtime JSON template and edit it
+    $> dockstore convert cwl2json --cwl Dockstore.cwl > Dockstore.json
+    # run it locally with the Dockstore CLI
+    $> dockstore launch --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 \
+        --json Dockstore.json
     ```
 
 dct:creator:
@@ -24,7 +34,7 @@ requirements:
       dockerPull: commonworkflowlanguage/nodejs-engine
     engineCommand: cwlNodeEngine.js
   - class: DockerRequirement
-    dockerPull: pancancer/pcawg-delly-workflow:1.4
+    dockerPull: pancancer/pcawg-delly-workflow:2.0.0
 
 inputs:
   - id: "#reads"
@@ -42,4 +52,4 @@ outputs:
     outputBinding:
       glob: ["*.bam", "*.bai"]
 
-baseCommand: ["perl", "/home/seqware/Seqware-BWA-Workflow/run_seqware_workflow.pl"]
+baseCommand: ["perl", "/usr/bin/run_seqware_workflow.pl"]

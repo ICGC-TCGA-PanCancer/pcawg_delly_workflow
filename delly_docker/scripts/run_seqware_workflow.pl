@@ -7,7 +7,7 @@ use Cwd;
 ########
 # ABOUT
 ########
-# This script wraps calling a SeqWare workflow, in this case, the BWA workflow.
+# This script wraps calling a SeqWare workflow, in this case, the DELLY workflow.
 # It reads param line options, which are easier to deal with in CWL, then
 # creates an INI file, and, finally, executes the workflow.  This workflow
 # is already setup to run in local file mode so I just really need to override
