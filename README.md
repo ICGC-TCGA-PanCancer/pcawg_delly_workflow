@@ -1,4 +1,4 @@
-![Alt text](img/PCAWG-final-small.png "Optional title")
+# ![Alt text](img/PCAWG-final-small.png "Optional title")
 
 # PCAWG DELLY Workflow
 
