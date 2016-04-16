@@ -17,6 +17,30 @@ use Cwd;
 # TODO:
 # this is a very hard-coded script and assumes it's running inside the Docker container
 
+# key items from INI
+# # key=input_bam_path_tumor:type=text:display=T:display_name=The relative tumor BAM path, directory name only
+input_bam_path_tumor=907c95e8-217c-4434-8b1d-3550507f0b80
+
+# key=input_bam_path_germ:type=text:display=T:display_name=The relative germline BAM path, corresponding to the directory with the tumor BAM
+input_bam_path_germ=b8a9dda5-8299-4fe4-8964-d248bb24bb95
+
+# key=datastore:type=text:display=T:display_name=path to datastore directory within the Docker container (which is tied from the upper level when running the Docker container)
+datastore=/datastore/
+
+# so for the above, the path is the directory that contains the BAM file... I could do something like /datastore/tumor and /datastore/normal...
+
+#key=ref_genome_path:type=text:display=F:display_name=The reference genome used in breakpointing. Only used if breakpoint=true.
+ref_genome_path=/datastore/data/hg19_1_22XYMT.fa
+#key=ref_genome_gc_path:type=text:display=F:display_name=The reference genome GC file.
+ref_genome_gc_path=/datastore/data/hg19_1_22XYMT.gc
+
+# TODO: need to be params, where are these hosted?
+http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz
+https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc 
+
+
+
+
 my @files;
 my ($reference_gz, $reference_gz_fai, $reference_gz_amb, $reference_gz_ann, $reference_gz_bwt, $reference_gz_pac, $reference_gz_sa);
 my $cwd = cwd();
