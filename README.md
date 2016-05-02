@@ -58,3 +58,7 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
 ## See Also
 
 These resources are based on a mirror of the original [bitbucket repository](https://bitbucket.org/weischen/pcawg-delly-workflow) to [Github](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).
+
+## TODO
+
+* capture all the output in the CWL
