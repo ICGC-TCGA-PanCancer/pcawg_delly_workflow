@@ -1,4 +1,4 @@
-<bundle version="1.4.0">
+<bundle version="2.0.0">
   <workflow name="DELLY" version="${workflow-version}" seqware_version="${seqware-version}"
   basedir="${workflow_bundle_dir}/Workflow_Bundle_DELLY/${workflow-version}">
     <description>${workflow-description}</description>
