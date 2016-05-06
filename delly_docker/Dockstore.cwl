@@ -37,19 +37,37 @@ requirements:
     dockerPull: pancancer/pcawg-delly-workflow:2.0.0
 
 inputs:
-  - id: "#reads"
-    type:
-      type: array
-      items: File
+  - id: "#run-id"
+    type: string
     inputBinding:
       position: 1
-      prefix: "--file"
+      prefix: "--run-id"
+  - id: "#normal-bam"
+    type: File
+    inputBinding:
+      position: 2
+      prefix: "--normal-bam"
+  - id: "#tumor-bam"
+    type: File
+    inputBinding:
+      position: 3
+      prefix: "--tumor-bam"
+  - id: "#reference-gz"
+    type: File
+    inputBinding:
+      position: 4
+      prefix: "--reference-gz"
+  - id: "#reference-gc"
+    type: File
+    inputBinding:
+      position: 5
+      prefix: "--reference-gc"
 
 outputs:
-  - id: "#bam"
+  - id: "#somatic-sv-vcf-gz"
     type: array
     items: File
     outputBinding:
-      glob: ["*.bam", "*.bai"]
+      glob: ["*.somatic.sv.vcf.gz"]
 
 baseCommand: ["perl", "/usr/bin/run_seqware_workflow.pl"]
