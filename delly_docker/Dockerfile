@@ -25,11 +25,17 @@ RUN chown -R seqware /home/seqware/DELLY
 USER seqware
 WORKDIR /home/seqware/DELLY/
 
+# add godaddy cert bridge
+# see http://drcs.ca/blog/adding-godaddy-intermediate-certificates-to-java-jdk/ and
+# http://tozny.com/blog/godaddys-ssl-certs-dont-work-in-java-the-right-solution/ for more information on this
+RUN wget https://certs.godaddy.com/repository/gdroot-g2_cross.crt && \
+    keytool -import -alias cross -file gdroot-g2_cross.crt -trustcacerts -keystore /usr/lib/jvm/java-7-oracle-cloudera/jre/lib/security/cacerts  -storepass changeit
+
 # build the workflow
-RUN mvn clean install
+RUN mvn -B clean install
 
 # configure for no retries and memory for SeqWare whitestar
-RUN echo "sed -i 's|OOZIE_RETRY_MAX=.*|OOZIE_RETRY_MAX=0|' /home/seqware/.seqware/settings && \
+RUN sed -i 's|OOZIE_RETRY_MAX=.*|OOZIE_RETRY_MAX=0|' /home/seqware/.seqware/settings && \
     echo 'WHITESTAR_MEMORY_LIMIT=160000' >> /home/seqware/.seqware/settings
 
 VOLUME /output
