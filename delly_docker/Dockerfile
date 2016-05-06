@@ -10,14 +10,10 @@ FROM seqware/seqware_whitestar:1.1.1
 MAINTAINER Ivica Letunic <letunic@biobyte.de>
 
 USER root
-RUN apt-get -m update
-
-RUN apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time
-RUN apt-get install -y python python-dev python-distribute python-pip
-RUN apt-get install -y r-base r-base-dev
-RUN apt-get install -y tabix cython
+RUN apt-get -m update && apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time python python-dev python-distribute python-pip r-base r-base-dev tabix cython
+RUN pip install --upgrade pip && hash -r
 RUN pip install pybedtools numpy docopt PyVCF
-RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 -O - |tar -xj -C /tmp/; cd /tmp/samtools-1.2; make; make install
+RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 -O - |tar -xj -C /tmp/ && cd /tmp/samtools-1.2 && make && make install
 #RUN echo "source(\"http://bioconductor.org/biocLite.R\")" > /tmp/dnacopy; echo "biocLite()" >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 COPY scripts/* /usr/bin/
 RUN for i in cleanup.sh cov cov_plot.pl cov_v0.5.6_linux_x86_64bit cov_v0.5.6_parallel_linux_x86_64bit delly delly_pcawg_qc_json.py delly_pcawg_timing_json.py delly_pe_dump.sh delly_prepare_uploader.sh DellySomaticFreqFilter.py delly_v0.6.3_parallel_linux_x86_64bit delly_v0.6.6_parallel_linux_x86_64bit dellyVcf2Tsv.py vcfcombine vcf_index.sh vcf-sort; do chmod a+rx /usr/bin/$i; done;
@@ -30,7 +26,7 @@ USER seqware
 WORKDIR /home/seqware/DELLY/
 
 # build the workflow
-RUN mvn -B clean install
+RUN mvn clean install
 
 # configure for no retries and memory for SeqWare whitestar
 RUN echo "sed -i 's|OOZIE_RETRY_MAX=.*|OOZIE_RETRY_MAX=0|' /home/seqware/.seqware/settings && \
