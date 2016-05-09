@@ -55,6 +55,12 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
     $> dockstore launch --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 \
         --json Dockstore.json
 
+## Sample Data
+
+A non-controlled access sample can be found here:
+
+    https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar
+
 ## See Also
 
 These resources are based on a mirror of the original [bitbucket repository](https://bitbucket.org/weischen/pcawg-delly-workflow) to [Github](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).
