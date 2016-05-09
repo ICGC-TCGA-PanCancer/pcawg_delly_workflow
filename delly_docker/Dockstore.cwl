@@ -64,15 +64,37 @@ inputs:
       prefix: "--reference-gc"
 
 outputs:
-  - id: "#somatic-sv-vcf-gz"
-    type: array
-    items: File
+  - id: "#somatic_sv_vcf"
+    type: File
     outputBinding:
-      glob: ["*.somatic.sv.vcf.gz"]
-  - id: "#somatic-sv-vcf-gz"
-    type: array
-    items: File
+      glob: "*.somatic.sv.vcf.gz"
+  - id: "#somatic_bedpe"
+    type: File
     outputBinding:
-      glob: ["*.somatic.sv.vcf.gz"]
+      glob: "*.somatic.sv.bedpe.txt"
+  - id: "#cov"
+    type: File
+    outputBinding:
+      glob: "*.sv.cov"
+  - id: "#germline_sv_vcf"
+    type: File
+    outputBinding:
+      glob: "*.germline.sv.vcf.gz"
+  - id: "#germline_bedpe"
+    type: File
+    outputBinding:
+      glob: "*.germline.sv.bedpe.txt"
+  - id: "#sv_log"
+    type: File
+    outputBinding:
+      glob: "*.sv.log"
+  - id: "#sv_timing"
+    type: File
+    outputBinding:
+      glob: "*.sv.timing.json"
+  - id: "#sv_qc"
+    type: File
+    outputBinding:
+      glob: "*.sv.qc.json"
 
 baseCommand: ["perl", "/usr/bin/run_seqware_workflow.pl"]

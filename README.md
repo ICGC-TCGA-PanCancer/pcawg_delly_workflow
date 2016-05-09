@@ -61,4 +61,4 @@ These resources are based on a mirror of the original [bitbucket repository](htt
 
 ## TODO
 
-* capture all the output in the CWL
+* capture all the output in the CWL, in particular how to deal with multiple matches for sv vcf globs
