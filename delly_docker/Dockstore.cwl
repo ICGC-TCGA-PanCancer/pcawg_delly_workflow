@@ -13,11 +13,11 @@ description: |
     ```
     Usage:
     # fetch CWL
-    $> dockstore cwl --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 > Dockstore.cwl
+    $> dockstore cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
     # make a runtime JSON template and edit it
     $> dockstore convert cwl2json --cwl Dockstore.cwl > Dockstore.json
     # run it locally with the Dockstore CLI
-    $> dockstore launch --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 \
+    $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
     ```
 
@@ -34,7 +34,7 @@ requirements:
       dockerPull: commonworkflowlanguage/nodejs-engine
     engineCommand: cwlNodeEngine.js
   - class: DockerRequirement
-    dockerPull: quay.io/pancancer/pcawg-delly-workflow:2.0.0
+    dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.0
 
 inputs:
   - id: "#run-id"
