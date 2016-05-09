@@ -34,7 +34,7 @@ requirements:
       dockerPull: commonworkflowlanguage/nodejs-engine
     engineCommand: cwlNodeEngine.js
   - class: DockerRequirement
-    dockerPull: pancancer/pcawg-delly-workflow:2.0.0
+    dockerPull: quay.io/pancancer/pcawg-delly-workflow:2.0.0
 
 inputs:
   - id: "#run-id"
@@ -64,6 +64,11 @@ inputs:
       prefix: "--reference-gc"
 
 outputs:
+  - id: "#somatic-sv-vcf-gz"
+    type: array
+    items: File
+    outputBinding:
+      glob: ["*.somatic.sv.vcf.gz"]
   - id: "#somatic-sv-vcf-gz"
     type: array
     items: File

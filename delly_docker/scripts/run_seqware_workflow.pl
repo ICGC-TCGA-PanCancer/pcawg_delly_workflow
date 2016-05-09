@@ -75,7 +75,7 @@ run("ln -s $reference_gc /datastore/data/hs37d5_1000GP.gc");
 # the default config is the workflow_local.ini and has most configs ready to go
 my $config = "
 # # key=datastore:type=text:display=T:display_name=ID for the current run, will be used to create filenames
-EMBL.delly_runID=$run_id
+delly_runID=$run_id
 
 # # key=input_bam_path_tumor:type=text:display=T:display_name=The relative tumor BAM path, directory name only
 input_bam_path_tumor=tumor
@@ -104,7 +104,7 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("mv /datastore/$path/delly_results/*.vcf.gz $cwd");
+system("mv /datastore/$path/delly_results/*.vcf.gz /datastore/$path/delly_results/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov /datastore/$path/delly_results/*.vcf.gz /datastore/$path/delly_results/*.sv.log /datastore/$path/delly_results/*.json $cwd");
 
 # RETURN RESULT
 exit($error);
