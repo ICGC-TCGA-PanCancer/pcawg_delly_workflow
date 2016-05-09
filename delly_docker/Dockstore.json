@@ -11,5 +11,45 @@
     "class":"File"
   },
   "reference-gz": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
-  "reference-gc": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc"
+  "reference-gc": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc",
+  "somatic_sv_vcf":
+  {
+    "path":"/mnt/test_data_delly_output/delly.somatic.sv.vcf.gz",
+    "class":"File"
+  },
+  "somatic_bedpe":
+  {
+    "path":"/mnt/test_data_delly_output/delly.somatic.sv.bedpe.txt",
+    "class":"File"
+  },
+  "cov":
+  {
+    "path":"/mnt/test_data_delly_output/delly.sv.cov",
+    "class":"File"
+  },
+  "germline_sv_vcf":
+  {
+    "path":"/mnt/test_data_delly_output/delly.germline.sv.vcf.gz",
+    "class":"File"
+  },
+  "germline_bedpe":
+  {
+    "path":"/mnt/test_data_delly_output/delly.germline.sv.bedpe.txt",
+    "class":"File"
+  },
+  "sv_log":
+  {
+    "path":"/mnt/test_data_delly_output/delly.sv.log",
+    "class":"File"
+  },
+  "sv_timing":
+  {
+    "path":"/mnt/test_data_delly_output/delly.sv.timing.json",
+    "class":"File"
+  },
+  "sv_qc":
+  {
+    "path":"/mnt/test_data_delly_output/delly.sv.qc.json",
+    "class":"File"
+  }
 }
