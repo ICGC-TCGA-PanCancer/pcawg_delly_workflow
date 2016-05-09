@@ -30,9 +30,9 @@ Email Brian if you have questions.  Joachim was the primary author.
 You need Docker installed in order to perform this build.
 
     cd delly_docker
-    docker build -t pancancer/pcawg-delly-workflow:2.0.0 .
+    docker build -t quay.io/pancancer/pcawg_delly_workflow:2.0.0 .
 
-Alternatively, you can view the entry on [Dockstore](https://www.dockstore.org/containers/quay.io/pancancer/pcawg-delly-workflow) to use a pre-built image.
+Alternatively, you can view the entry on [Dockstore](https://www.dockstore.org/containers/quay.io/pancancer/pcawg_delly_workflow) to use a pre-built image.
 
 ## Hardware Requirements
 
@@ -48,11 +48,11 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
 
     Usage:
     # fetch CWL
-    $> dockstore cwl --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 > Dockstore.cwl
+    $> dockstore cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
     # make a runtime JSON template and edit it
     $> dockstore convert cwl2json --cwl Dockstore.cwl > Dockstore.json
     # run it locally with the Dockstore CLI
-    $> dockstore launch --entry quay.io/pancancer/pcawg-delly-workflow:2.0.0 \
+    $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
 
 ## Sample Data
