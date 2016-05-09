@@ -2,12 +2,12 @@
   "run-id": "run_id",
   "tumor-bam":
   {
-    "path":"/mnt/data/ad4aeedc224c6be5e21e26c038a43df4.bam",
+    "path":"/mnt/test_data_delly/HCC1143_ds/HCC1143.bam",
     "class":"File"
   },
   "normal-bam":
   {
-    "path":"/mnt/data/9f8f6f03df6d100c90a761164800a42c.bam",
+    "path":"/mnt/test_data_delly/HCC1143_ds/HCC1143_BL.bam",
     "class":"File"
   },
   "reference-gz": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
