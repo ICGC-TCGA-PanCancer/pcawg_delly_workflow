@@ -6,7 +6,7 @@ label: "Seqware-Delly-Workflow"
 
 description: |
     ![pcawg logo](https://dcc.icgc.org/styles/images/PCAWG-final-small.png "pcawg logo")
-    #PCAWG DELLY Workflow
+    # PCAWG DELLY Workflow
     The DELLY workflow from the ICGC PanCancer Analysis of Whole Genomes (PCAWG) project. For more information see the PCAWG project [page](https://dcc.icgc.org/pcawg) and our GitHub
     [page](https://github.com/ICGC-TCGA-PanCancer) for our code including the source for
     [this workflow](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).

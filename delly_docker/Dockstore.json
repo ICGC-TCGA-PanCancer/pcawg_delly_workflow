@@ -10,8 +10,16 @@
     "path":"/mnt/test_data_delly/HCC1143_ds/HCC1143_BL.bam",
     "class":"File"
   },
-  "reference-gz": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
-  "reference-gc": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc",
+  "reference-gz":
+  {
+    "path": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
+    "class": "File"
+  },
+  "reference-gc":
+  {
+    "path": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc",
+    "class": "File"
+  },
   "somatic_sv_vcf":
   {
     "path":"/mnt/test_data_delly_output/delly.somatic.sv.vcf.gz",
