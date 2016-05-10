@@ -67,8 +67,9 @@ run("mkdir -p /datastore/tumor/");
 run("ln -s $normal_bam /datastore/normal/");
 run("ln -s $tumor_bam /datastore/tumor/");
 run("mkdir -p /datastore/data/");
-run("ln -s $reference_gz /datastore/data/genome.fa.gz");
-run("gunzip /datastore/data/genome.fa.gz");
+#run("ln -s $reference_gz /datastore/data/genome.fa.gz");
+#run("gunzip /datastore/data/genome.fa.gz");
+run("gunzip -c $reference_gz > /datastore/data/genome.fa.gz");
 run("ln -s $reference_gc /datastore/data/hs37d5_1000GP.gc");
 
 # MAKE CONFIG
