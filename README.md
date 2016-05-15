@@ -40,13 +40,18 @@ This workflow recommends:
 
 * 16-32 cores
 * 4.5G per core, so, ideally 72GB+ for 16 cores, for 32 cores 144GB+, on Amazon we recommend r3.8xlarge or r3.4xlarge
-* 1TB of local disk space
+* 1TB of local disk space (depends on the input genome size)
 
 ## Sample Data
 
-A non-controlled access sample can be found here:
+Non-controlled access sample BAM files can be found here:
 
-    https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar
+* [https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar](https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar)
+
+And the two needed reference files can be found here:
+
+* [https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz](https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz)
+* [https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc](https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc)
 
 For sample parameters (a sample Dockstore.json in the command below) see [Dockstore.json](delly_docker/Dockstore.json).
 Make sure you customize this to reflect whatever local paths you downloaded and extracted
@@ -64,6 +69,10 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
     # run it locally with the Dockstore CLI
     $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
+
+## Tips
+
+* Be mindful of where you run the `dockstore launch` above. Make sure your VM has enough memory to run this tool and the current working directory is on a filesystem with enough storage.
 
 ## See Also
 

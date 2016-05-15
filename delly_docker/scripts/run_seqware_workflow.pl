@@ -73,8 +73,8 @@ run("samtools index /datastore/tumor/*.bam");
 run("mkdir -p /datastore/data/");
 #run("ln -s $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
-system("gunzip -c $reference_gz > /datastore/data/hs37d5_1000GP.fa");
-run("ln -s $reference_gc /datastore/data/hs37d5_1000GP.gc");
+system("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
+run("ln -s $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 
 # MAKE CONFIG
 # the default config is the workflow_local.ini and has most configs ready to go
