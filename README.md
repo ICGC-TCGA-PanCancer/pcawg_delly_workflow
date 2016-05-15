@@ -42,9 +42,19 @@ This workflow recommends:
 * 4.5G per core, so, ideally 72GB+ for 16 cores, for 32 cores 144GB+, on Amazon we recommend r3.8xlarge or r3.4xlarge
 * 1TB of local disk space
 
+## Sample Data
+
+A non-controlled access sample can be found here:
+
+    https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar
+
+For sample parameters (a sample Dockstore.json in the command below) see [Dockstore.json](delly_docker/Dockstore.json).
+Make sure you customize this to reflect whatever local paths you downloaded and extracted
+the above sample BAM files to.
+
 ## Running
 
-You can use the Dockstore command line to simplify calling this workflow.  If you prefer to call the workflow directly using Docker see the output from the commands below.  For a parameterization using test data see our sample [Dockstore.json](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/blob/develop/delly_docker/Delly.json) hosted in GitHub.
+You can use the Dockstore command line to simplify calling this workflow.  If you prefer to call the workflow directly using Docker see the output from the commands below.  For a parameterization using test data see our sample [Dockstore.json](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/blob/develop/delly_docker/Delly.json) hosted in GitHub and the note above.
 
     Usage:
     # fetch CWL
@@ -54,12 +64,6 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
     # run it locally with the Dockstore CLI
     $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
-
-## Sample Data
-
-A non-controlled access sample can be found here:
-
-    https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/testdata/HCC1143_ds.tar
 
 ## See Also
 

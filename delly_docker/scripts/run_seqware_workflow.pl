@@ -61,15 +61,19 @@ GetOptions (
 
 # PARSE OPTIONS
 
+system("sudo chmod a+rwx /tmp");
+
 # SYMLINK REF FILES
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
 run("ln -s $normal_bam /datastore/normal/");
+run("samtools index /datastore/normal/*.bam");
 run("ln -s $tumor_bam /datastore/tumor/");
+run("samtools index /datastore/tumor/*.bam");
 run("mkdir -p /datastore/data/");
 #run("ln -s $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
-run("gunzip -c $reference_gz > /datastore/data/genome.fa.gz");
+system("gunzip -c $reference_gz > /datastore/data/hs37d5_1000GP.fa");
 run("ln -s $reference_gc /datastore/data/hs37d5_1000GP.gc");
 
 # MAKE CONFIG
@@ -93,12 +97,12 @@ ref_genome_path=/datastore/data/hg19_1_22XYMT.fa
 ref_genome_gc_path=/datastore/data/hg19_1_22XYMT.gc
 ";
 
-open OUT, ">workflow.ini" or die;
+open OUT, ">/datastore/workflow.ini" or die;
 print OUT $config;
 close OUT;
 
 # NOW RUN WORKFLOW
-my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1/Workflow_Bundle_DELLY/2.0.0  --engine whitestar --ini workflow.ini --no-metadata");
+my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
 # NOW FIND OUTPUT
 my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
