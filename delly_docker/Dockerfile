@@ -19,6 +19,9 @@ COPY scripts/* /usr/bin/
 RUN for i in cleanup.sh cov cov_plot.pl cov_v0.5.6_linux_x86_64bit cov_v0.5.6_parallel_linux_x86_64bit delly delly_pcawg_qc_json.py delly_pcawg_timing_json.py delly_pe_dump.sh delly_prepare_uploader.sh DellySomaticFreqFilter.py delly_v0.6.3_parallel_linux_x86_64bit delly_v0.6.6_parallel_linux_x86_64bit dellyVcf2Tsv.py vcfcombine vcf_index.sh vcf-sort; do chmod a+rx /usr/bin/$i; done;
 RUN echo 'install.packages("/usr/bin/DNAcopy_1.38.1.tar.gz")' >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 
+# make dir
+RUN mkdir -p /var/spool/cwl/ && chmod a+rwx /var/spool/cwl/
+
 # copy over the workflow src contents
 COPY DELLY /home/seqware/DELLY
 RUN chown -R seqware /home/seqware/DELLY
