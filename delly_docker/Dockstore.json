@@ -32,7 +32,12 @@
   },
   "cov":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.cov",
+    "path":"/mnt/test_data_delly_output/delly.sv.cov.tar.gz",
+    "class":"File"
+  },
+  "cov_plots":
+  {
+    "path":"/mnt/test_data_delly_output/delly.sv.cov.plots.tar.gz",
     "class":"File"
   },
   "germline_sv_vcf":
@@ -47,7 +52,7 @@
   },
   "sv_log":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.log",
+    "path":"/mnt/test_data_delly_output/delly.sv.log.tar.gz",
     "class":"File"
   },
   "sv_timing":

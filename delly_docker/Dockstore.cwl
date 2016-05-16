@@ -75,7 +75,11 @@ outputs:
   - id: "#cov"
     type: File
     outputBinding:
-      glob: "*.sv.cov"
+      glob: "*.sv.cov.tar.gz"
+  - id: "#cov_plots"
+    type: File
+    outputBinding:
+      glob: "*.sv.cov.plots.tar.gz"
   - id: "#germline_sv_vcf"
     type: File
     outputBinding:
@@ -87,7 +91,7 @@ outputs:
   - id: "#sv_log"
     type: File
     outputBinding:
-      glob: "*.sv.log"
+      glob: "*.sv.log.tar.gz"
   - id: "#sv_timing"
     type: File
     outputBinding:

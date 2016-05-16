@@ -109,7 +109,7 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("mv /datastore/$path/delly_results/*.vcf.gz /datastore/$path/delly_results/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov /datastore/$path/delly_results/*.vcf.gz /datastore/$path/delly_results/*.sv.log /datastore/$path/delly_results/*.json $cwd");
+system("mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
 
 # RETURN RESULT
 exit($error);

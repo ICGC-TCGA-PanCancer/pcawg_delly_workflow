@@ -12,7 +12,7 @@ MAINTAINER Ivica Letunic <letunic@biobyte.de>
 USER root
 RUN apt-get -m update && apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time python python-dev python-distribute python-pip r-base r-base-dev tabix cython
 RUN pip install --upgrade pip && hash -r
-RUN pip install pybedtools numpy docopt PyVCF
+RUN pip install pybedtools numpy docopt PyVCF wheel pandas
 RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 -O - |tar -xj -C /tmp/ && cd /tmp/samtools-1.2 && make && make install
 #RUN echo "source(\"http://bioconductor.org/biocLite.R\")" > /tmp/dnacopy; echo "biocLite()" >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 COPY scripts/* /usr/bin/
