@@ -10,7 +10,7 @@ FROM seqware/seqware_whitestar:1.1.1
 MAINTAINER Ivica Letunic <letunic@biobyte.de>
 
 USER root
-RUN apt-get -m update && apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time python python-dev python-distribute python-pip r-base r-base-dev tabix cython
+RUN apt-get -m update && apt-get install -y apt-utils tar git curl nano wget dialog net-tools build-essential time python python-dev python-distribute python-pip r-base r-base-dev tabix cython sudo
 RUN pip install --upgrade pip && hash -r
 RUN pip install pybedtools numpy docopt PyVCF wheel pandas
 RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2.tar.bz2 -O - |tar -xj -C /tmp/ && cd /tmp/samtools-1.2 && make && make install
@@ -18,9 +18,6 @@ RUN wget https://github.com/samtools/samtools/releases/download/1.2/samtools-1.2
 COPY scripts/* /usr/bin/
 RUN for i in cleanup.sh cov cov_plot.pl cov_v0.5.6_linux_x86_64bit cov_v0.5.6_parallel_linux_x86_64bit delly delly_pcawg_qc_json.py delly_pcawg_timing_json.py delly_pe_dump.sh delly_prepare_uploader.sh DellySomaticFreqFilter.py delly_v0.6.3_parallel_linux_x86_64bit delly_v0.6.6_parallel_linux_x86_64bit dellyVcf2Tsv.py vcfcombine vcf_index.sh vcf-sort; do chmod a+rx /usr/bin/$i; done;
 RUN echo 'install.packages("/usr/bin/DNAcopy_1.38.1.tar.gz")' >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
-
-# make dir
-RUN mkdir -p /var/spool/cwl/ && chmod a+rwx /var/spool/cwl/
 
 # copy over the workflow src contents
 COPY DELLY /home/seqware/DELLY

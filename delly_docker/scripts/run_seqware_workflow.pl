@@ -73,7 +73,7 @@ run("samtools index /datastore/tumor/*.bam");
 run("mkdir -p /datastore/data/");
 #run("ln -s $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
-system("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
+run("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
 run("ln -s $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 
 # MAKE CONFIG
@@ -109,13 +109,14 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
+system("sudo mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
 
 # RETURN RESULT
 exit($error);
 
 sub run {
   my $cmd = shift;
+  print "EXECUTING CMD: $cmd\n";
   my $error = system($cmd);
   if ($error) { exit($error); }
 }
