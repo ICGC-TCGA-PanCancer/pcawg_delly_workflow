@@ -73,7 +73,7 @@ run("samtools index /datastore/tumor/*.bam");
 run("mkdir -p /datastore/data/");
 #run("ln -s $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
-run("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
+system("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
 run("ln -s $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 
 # MAKE CONFIG
