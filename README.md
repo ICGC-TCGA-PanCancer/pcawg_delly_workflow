@@ -61,13 +61,14 @@ the above sample BAM files to.
 
 You can use the Dockstore command line to simplify calling this workflow.  If you prefer to call the workflow directly using Docker see the output from the commands below.  For a parameterization using test data see our sample [Dockstore.json](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/blob/develop/delly_docker/Delly.json) hosted in GitHub and the note above.
 
-    Usage:
+*Usage:*
+
     # fetch CWL
-    $> dockstore cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
+    $> dockstore tool cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
     # make a runtime JSON template and edit it
-    $> dockstore convert cwl2json --cwl Dockstore.cwl > Dockstore.json
+    $> dockstore tool convert cwl2json --cwl Dockstore.cwl > Dockstore.json
     # run it locally with the Dockstore CLI
-    $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
+    $> dockstore tool launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
 
 ## Tips
@@ -78,6 +79,4 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
 
 These resources are based on a mirror of the original [bitbucket repository](https://bitbucket.org/weischen/pcawg-delly-workflow) to [Github](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).
 
-## TODO
 
-* capture all the output in the CWL, in particular how to deal with multiple matches for sv vcf globs

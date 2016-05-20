@@ -5,21 +5,26 @@ id: "Seqware-Delly-Workflow"
 label: "Seqware-Delly-Workflow"
 
 description: |
-    ![pcawg logo](https://dcc.icgc.org/styles/images/PCAWG-final-small.png "pcawg logo")
-    # PCAWG DELLY Workflow
+    ![pcawg logo](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/img/PCAWG-final-small.png "pcawg logo")
+
+    **PCAWG DELLY Workflow**
+
     The DELLY workflow from the ICGC PanCancer Analysis of Whole Genomes (PCAWG) project. For more information see the PCAWG project [page](https://dcc.icgc.org/pcawg) and our GitHub
     [page](https://github.com/ICGC-TCGA-PanCancer) for our code including the source for
     [this workflow](https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow).
+
+    *Usage:*
+
     ```
-    Usage:
     # fetch CWL
-    $> dockstore cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
+    $> dockstore tool cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
     # make a runtime JSON template and edit it
-    $> dockstore convert cwl2json --cwl Dockstore.cwl > Dockstore.json
+    $> dockstore tool convert cwl2json --cwl Dockstore.cwl > Dockstore.json
     # run it locally with the Dockstore CLI
-    $> dockstore launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
+    $> dockstore tool launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
         --json Dockstore.json
     ```
+    Also see this sample [Dockstore.json](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/delly_docker/Dockstore.json) with public URLs for sample data.
 
 dct:creator:
   "@id": "http://orcid.org/0000-0002-7681-6415"
