@@ -66,10 +66,10 @@ system("sudo chmod a+rwx /tmp");
 # SYMLINK REF FILES
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
-run("ln -s $normal_bam /datastore/normal/");
-run("samtools index /datastore/normal/*.bam");
-run("ln -s $tumor_bam /datastore/tumor/");
-run("samtools index /datastore/tumor/*.bam");
+run("ln -s $normal_bam /datastore/normal/normal.bam");
+run("samtools index /datastore/normal/normal.bam");
+run("ln -s $tumor_bam /datastore/tumor/tumor.bam");
+run("samtools index /datastore/tumor/tumor.bam");
 run("mkdir -p /datastore/data/");
 #run("ln -s $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
