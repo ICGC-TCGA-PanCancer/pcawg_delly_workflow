@@ -2,12 +2,12 @@
   "run-id": "run_id",
   "tumor-bam":
   {
-    "path":"/mnt/test_data_delly/HCC1143_ds/HCC1143.bam",
+    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143.bam",
     "class":"File"
   },
   "normal-bam":
   {
-    "path":"/mnt/test_data_delly/HCC1143_ds/HCC1143_BL.bam",
+    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143_BL.bam",
     "class":"File"
   },
   "reference-gz":
@@ -22,47 +22,47 @@
   },
   "somatic_sv_vcf":
   {
-    "path":"/mnt/test_data_delly_output/delly.somatic.sv.vcf.gz",
+    "path":"./test_data_delly_output/delly.somatic.sv.vcf.gz",
     "class":"File"
   },
   "somatic_bedpe":
   {
-    "path":"/mnt/test_data_delly_output/delly.somatic.sv.bedpe.txt",
+    "path":"./test_data_delly_output/delly.somatic.sv.bedpe.txt",
     "class":"File"
   },
   "cov":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.cov.tar.gz",
+    "path":"./test_data_delly_output/delly.sv.cov.tar.gz",
     "class":"File"
   },
   "cov_plots":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.cov.plots.tar.gz",
+    "path":"./test_data_delly_output/delly.sv.cov.plots.tar.gz",
     "class":"File"
   },
   "germline_sv_vcf":
   {
-    "path":"/mnt/test_data_delly_output/delly.germline.sv.vcf.gz",
+    "path":"./test_data_delly_output/delly.germline.sv.vcf.gz",
     "class":"File"
   },
   "germline_bedpe":
   {
-    "path":"/mnt/test_data_delly_output/delly.germline.sv.bedpe.txt",
+    "path":"./test_data_delly_output/delly.germline.sv.bedpe.txt",
     "class":"File"
   },
   "sv_log":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.log.tar.gz",
+    "path":"./test_data_delly_output/delly.sv.log.tar.gz",
     "class":"File"
   },
   "sv_timing":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.timing.json",
+    "path":"./test_data_delly_output/delly.sv.timing.json",
     "class":"File"
   },
   "sv_qc":
   {
-    "path":"/mnt/test_data_delly_output/delly.sv.qc.json",
+    "path":"./test_data_delly_output/delly.sv.qc.json",
     "class":"File"
   }
 }
