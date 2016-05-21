@@ -230,9 +230,9 @@ if vcfFile:
 # Output vcf records
 if vcfFile:
     vcf_reader=vcf.Reader(open(vcfFile), 'r', compressed=True) if vcfFile.endswith('.gz') else vcf.Reader(open(vcfFile), 'r', compressed=False)
-    vcf_reader.infos['SOMATIC'] = vcf.parser._Info('SOMATIC', 0, 'Flag', 'Somatic structural variant.')
-    vcf_reader.infos['GERMLINE'] = vcf.parser._Info('GERMLINE', 0, 'Flag', 'Germline structural variant.')
-    vcf_reader.infos['RDRATIO'] = vcf.parser._Info('RDRATIO', 1, 'Float', 'Read-depth ratio of tumor vs. normal.')
+    vcf_reader.infos['SOMATIC'] = vcf.parser._Info('SOMATIC', 0, 'Flag', 'Somatic structural variant.', '', '')
+    vcf_reader.infos['GERMLINE'] = vcf.parser._Info('GERMLINE', 0, 'Flag', 'Germline structural variant.', '', '')
+    vcf_reader.infos['RDRATIO'] = vcf.parser._Info('RDRATIO', 1, 'Float', 'Read-depth ratio of tumor vs. normal.', '', '')
     vcf_writer = vcf.Writer(open(outFile, 'w'), vcf_reader, lineterminator='\n')
     vcfConf_writer = vcf.Writer(open(outFileSomaticConf, 'w'), vcf_reader, lineterminator='\n')
     vcf_Germwriter = vcf.Writer(open(outFileGerm, 'w'), vcf_reader, lineterminator='\n')    

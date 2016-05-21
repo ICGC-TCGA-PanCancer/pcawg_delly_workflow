@@ -1,61 +1,68 @@
-#http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz
-#https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc
-
-
 {
-  "tumor":
+  "run-id": "run_id",
+  "tumor-bam":
   {
-    "path":"/mnt/data/ad4aeedc224c6be5e21e26c038a43df4.bam",
+    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143.bam",
     "class":"File"
   },
-  "normal":
+  "normal-bam":
   {
-    "path":"/mnt/data/9f8f6f03df6d100c90a761164800a42c.bam",
+    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143_BL.bam",
     "class":"File"
   },
-  "refFrom":
+  "reference-gz":
   {
-    "path":"https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/reference/GRCh37d5_CGP_refBundle.tar.gz",
+    "path": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
+    "class": "File"
+  },
+  "reference-gc":
+  {
+    "path": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc",
+    "class": "File"
+  },
+  "somatic_sv_vcf":
+  {
+    "path":"/tmp/delly.somatic.sv.vcf.gz",
     "class":"File"
   },
-  "bbFrom":
+  "somatic_bedpe":
   {
-    "path":"https://s3-eu-west-1.amazonaws.com/wtsi-pancancer/reference/GRCh37d5_battenberg.tar.gz",
+    "path":"/tmp/delly.somatic.sv.bedpe.txt",
     "class":"File"
   },
-  "somatic_snv_mnv_tar_gz":
+  "cov":
   {
-    "path":"/mnt/output/somatic_snv_mnv_tar_gz",
+    "path":"/tmp/delly.sv.cov.tar.gz",
     "class":"File"
   },
-  "somatic_cnv_tar_gz":
+  "cov_plots":
   {
-    "path":"/mnt/output/somatic_cnv_tar_gz",
+    "path":"/tmp/delly.sv.cov.plots.tar.gz",
     "class":"File"
   },
-  "somatic_sv_tar_gz":
+  "germline_sv_vcf":
   {
-    "path":"/mnt/output/somatic_sv_tar_gz",
+    "path":"/tmp/delly.germline.sv.vcf.gz",
     "class":"File"
   },
-  "somatic_indel_tar_gz":
+  "germline_bedpe":
   {
-    "path":"/mnt/output/somatic_indel_tar_gz",
+    "path":"/tmp/delly.germline.sv.bedpe.txt",
     "class":"File"
   },
-  "somatic_imputeCounts_tar_gz":
+  "sv_log":
   {
-    "path":"/mnt/output/somatic_imputeCounts_tar_gz",
+    "path":"/tmp/delly.sv.log.tar.gz",
     "class":"File"
   },
-  "somatic_genotype_tar_gz":
+  "sv_timing":
   {
-    "path":"/mnt/output/somatic_genotype_tar_gz",
+    "path":"/tmp/delly.sv.timing.json",
     "class":"File"
   },
-  "somatic_verifyBamId_tar_gz":
+  "sv_qc":
   {
-    "path":"/mnt/output/somatic_verifyBamId_tar_gz",
+    "path":"/tmp/delly.sv.qc.json",
     "class":"File"
   }
 }

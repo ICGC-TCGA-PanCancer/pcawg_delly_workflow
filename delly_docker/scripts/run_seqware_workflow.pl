@@ -61,21 +61,26 @@ GetOptions (
 
 # PARSE OPTIONS
 
+system("sudo chmod a+rwx /tmp");
+
 # SYMLINK REF FILES
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
-run("ln -s $normal_bam /datastore/normal/");
-run("ln -s $tumor_bam /datastore/tumor/");
+run("ln -s $normal_bam /datastore/normal/normal.bam");
+run("samtools index /datastore/normal/normal.bam");
+run("ln -s $tumor_bam /datastore/tumor/tumor.bam");
+run("samtools index /datastore/tumor/tumor.bam");
 run("mkdir -p /datastore/data/");
-run("ln -s $reference_gz /datastore/data/genome.fa.gz");
-run("gunzip /datastore/data/genome.fa.gz");
-run("ln -s $reference_gc /datastore/data/hs37d5_1000GP.gc");
+#run("ln -s $reference_gz /datastore/data/genome.fa.gz");
+#run("gunzip /datastore/data/genome.fa.gz");
+system("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
+run("ln -s $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 
 # MAKE CONFIG
 # the default config is the workflow_local.ini and has most configs ready to go
 my $config = "
 # # key=datastore:type=text:display=T:display_name=ID for the current run, will be used to create filenames
-EMBL.delly_runID=$run_id
+delly_runID=$run_id
 
 # # key=input_bam_path_tumor:type=text:display=T:display_name=The relative tumor BAM path, directory name only
 input_bam_path_tumor=tumor
@@ -92,25 +97,26 @@ ref_genome_path=/datastore/data/hg19_1_22XYMT.fa
 ref_genome_gc_path=/datastore/data/hg19_1_22XYMT.gc
 ";
 
-open OUT, ">workflow.ini" or die;
+open OUT, ">/datastore/workflow.ini" or die;
 print OUT $config;
 close OUT;
 
 # NOW RUN WORKFLOW
-my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1/Workflow_Bundle_DELLY/2.0.0  --engine whitestar --ini workflow.ini --no-metadata");
+my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
 # NOW FIND OUTPUT
 my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("mv /datastore/$path/delly_results/*.vcf.gz $cwd");
+system("sudo mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
 
 # RETURN RESULT
 exit($error);
 
 sub run {
   my $cmd = shift;
+  print "EXECUTING CMD: $cmd\n";
   my $error = system($cmd);
   if ($error) { exit($error); }
 }

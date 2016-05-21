@@ -117,34 +117,38 @@ for(myChr in chr) {
 
 	ymax <- max(c(logCov1[is.finite(logCov1)], logCov2[is.finite(logCov2)]))
 
-	if (length(logRatio[is.finite(logRatio)]) > 0) {
-		jpeg(paste(sampleNamesSub[1], "_", myChr, ".jpg", sep=""), quality=90, width=1600, height=1000);
+  if(median(cov1[,4]) > 1 && median(cov2[,4]) > 1 ) {
 
-		par(mfrow=c(3,1))
-		plot(xnames, logCov2, xlim=c(min(xnames), max(xnames)), ylim=c(0,ymax), main=paste(sampleNamesSub[2], myChr), xlab="Chromosome position", ylab=paste("Log2 #read per ", winSizeInKb, "kb", sep=""), col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")Sub
-		abline(h=median(logCov2[is.finite(logCov2)]), col=colors()[230], lty=1)
-		abline(h=seq(0,(as.integer(ymax)+1),2), col="gray60", lty="dotted")
-		abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
-		plot(xnames, logCov1, xlim=c(min(xnames), max(xnames)), ylim=c(0,ymax), main=paste(sampleNamesSub[1], myChr), xlab="Chromosome position", ylab=paste("Log2 #read per ", winSizeInKb, "kb", sep=""), col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")Sub
-		abline(h=median(logCov1[is.finite(logCov1)]), col=colors()[230], lty=1)
-		abline(h=seq(0,(as.integer(ymax)+1),2), col="gray60", lty="dotted")
-		abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
-	  	plot(xnames[sig], logRatio[sig], xlim=c(min(xnames), max(xnames)), ylim=c(min(logRatio[is.finite(logRatio)], -minDelta, na.rm = T),max(logRatio[is.finite(logRatio)], minDelta, na.rm = T)), main=paste("log2 ratio sample vs control", myChr), xlab="Chromosome position", ylab="Log2 ratio", col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")
+    if (length(logRatio[is.finite(logRatio)]) > 0) {
+      jpeg(paste(sampleNamesSub[1], "_", myChr, ".jpg", sep=""), quality=90, width=1600, height=1000);
 
-		abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
-		abline(v=vlines, col="gray60", lty=1)
-		abline(h=0, col=colors()[230], lty=1)
-		abline(h=c(-20:-1,1:20), col="gray60", lty="dotted")
+      par(mfrow=c(3,1))
+      plot(xnames, logCov2, xlim=c(min(xnames), max(xnames)), ylim=c(0,ymax), main=paste(sampleNamesSub[2], myChr), xlab="Chromosome position", ylab=paste("Log2 #read per ", winSizeInKb, "kb", sep=""), col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")Sub
+      abline(h=median(logCov2[is.finite(logCov2)]), col=colors()[230], lty=1)
+      abline(h=seq(0,(as.integer(ymax)+1),2), col="gray60", lty="dotted")
+      abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
+      plot(xnames, logCov1, xlim=c(min(xnames), max(xnames)), ylim=c(0,ymax), main=paste(sampleNamesSub[1], myChr), xlab="Chromosome position", ylab=paste("Log2 #read per ", winSizeInKb, "kb", sep=""), col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")Sub
+      abline(h=median(logCov1[is.finite(logCov1)]), col=colors()[230], lty=1)
+      abline(h=seq(0,(as.integer(ymax)+1),2), col="gray60", lty="dotted")
+      abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
+        plot(xnames[sig], logRatio[sig], xlim=c(min(xnames), max(xnames)), ylim=c(min(logRatio[is.finite(logRatio)], -minDelta, na.rm = T),max(logRatio[is.finite(logRatio)], minDelta, na.rm = T)), main=paste("log2 ratio sample vs control", myChr), xlab="Chromosome position", ylab="Log2 ratio", col='black', pch=20, cex.main=1.5, cex.axis=1.5, cex.lab=1.5, cex=0.8) #, xaxt="n")
 
-		segments(cov3$loc.start,cov3$seg.mean,cov3$loc.end,cov3$seg.mean,lwd=3, col="firebrick2")
-		
-		dev.off();
-	} else {
-		jpeg(paste(myChr, ".jpg", sep=""), quality=100);
-		plot(0,0,xlim=c(min(xnames),max(xnames)), ylim=c(globalMed-2, globalMed+2), main=myChr, xlab="Chromosome position", ylab="Log2 ratio", pch="o")
-		abline(globalMed,0,col = "green", lty=2)
-		dev.off();
+      abline(v=seq(min(xnames), max(xnames), 5000000), col="gray60", lty="dotted")
+      abline(v=vlines, col="gray60", lty=1)
+      abline(h=0, col=colors()[230], lty=1)
+      abline(h=c(-20:-1,1:20), col="gray60", lty="dotted")
+
+      segments(cov3$loc.start,cov3$seg.mean,cov3$loc.end,cov3$seg.mean,lwd=3, col="firebrick2")
+
+      dev.off();
+    } else {
+      jpeg(paste(myChr, ".jpg", sep=""), quality=100);
+      plot(0,0,xlim=c(min(xnames),max(xnames)), ylim=c(globalMed-2, globalMed+2), main=myChr, xlab="Chromosome position", ylab="Log2 ratio", pch="o")
+      abline(globalMed,0,col = "green", lty=2)
+      dev.off();
+    }
 	}
+
 }
 write.table(CNA.seg,file=paste(sampleNamesSub[1], "_segmentation.txt", sep=""), col.names=T, row.names=F, sep="\t", quote=F)
 
