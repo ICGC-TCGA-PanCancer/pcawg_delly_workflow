@@ -73,7 +73,8 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
 
 ## Tips
 
-* Be mindful of where you run the `dockstore launch` above. Make sure your VM has enough memory to run this tool and the current working directory is on a filesystem with enough storage.
+* Carefully monitor the CPU, storage, and memory usage of this workflow. You may be able to use a smaller instance than what is recommended above.
+* Be mindful of where on the filesystem you run the `dockstore launch` above. The working directory, where large files are downloaded to, is placed here.
 
 ## See Also
 
