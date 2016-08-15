@@ -2,7 +2,7 @@
 
 #PCAWG DELLY Workflow
 
-[![Build Status](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow.svg?branch=master)](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow) [![Docker Repository on Quay](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow/status "Docker Repository on Quay")](https://quay.io/repository/pancancer/pcawg-sanger-cgp-workflow)
+[![Build Status](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow.svg?branch=master)](https://travis-ci.org/ICGC-TCGA-PanCancer/pcawg_delly_workflow) [![Docker Repository on Quay](https://quay.io/repository/pancancer/pcawg_delly_workflow/status "Docker Repository on Quay")](https://quay.io/repository/pancancer/pcawg_delly_workflow)
 
 A [Dockstore](http://dockstore.org) version of the DELLY and COV workflow used by the PCAWG project. This is a cleaned up version with PCAWG-specific components removed and designed to be easier to call through the use of the [Dockstore](http://dockstore.org). See [Pancancer.info](http://pancancer.info) and the [PCAWG ICGC portal](https://dcc.icgc.org/pcawg) for more information about this project and how to access its results. The underlying workflow has been written using [SeqWare 1.1.1](http://seqware.io).
 
