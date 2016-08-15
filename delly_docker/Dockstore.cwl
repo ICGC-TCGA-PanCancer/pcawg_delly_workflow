@@ -26,18 +26,14 @@ description: |
     ```
     Also see this sample [Dockstore.json](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/delly_docker/Dockstore.json) with public URLs for sample data.
 
+cwlVersion: draft-3
+
 dct:creator:
   "@id": "http://orcid.org/0000-0002-7681-6415"
   foaf:name: "Brian O'Connor"
   foaf:mbox: "mailto:briandoconnor@gmail.com"
 
 requirements:
-  - class: ExpressionEngineRequirement
-    id: "#node-engine"
-    requirements:
-    - class: DockerRequirement
-      dockerPull: commonworkflowlanguage/nodejs-engine
-    engineCommand: cwlNodeEngine.js
   - class: DockerRequirement
     dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.0
 
