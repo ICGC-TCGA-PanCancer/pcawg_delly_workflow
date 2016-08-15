@@ -11,7 +11,8 @@ dct:creator:
   foaf:mbox: mailto:briandoconnor@gmail.com
 requirements:
 - class: DockerRequirement
-    dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.1
+  dockerPull: quay.io/pancancer/pcawg_delly_workflow:feature_cwl1
+#  dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.0-cwl1
 
 inputs:
   run-id:
