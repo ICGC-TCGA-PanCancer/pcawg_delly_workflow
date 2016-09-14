@@ -102,6 +102,11 @@ print OUT $config;
 close OUT;
 
 # NOW RUN WORKFLOW
+# workaround for docker permissions 
+run("sudo mkdir -p /var/spool/cwl/.seqware && sudo chown -R seqware /var/spool/cwl/");
+run("sudo cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
+run("sudo chmod a+wrx /var/spool/cwl/.seqware/settings");
+run("perl -pi -e 's/wrench.res/seqwaremaven/g' /home/seqware/bin/seqware");
 my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
 # NOW FIND OUTPUT
