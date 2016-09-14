@@ -88,14 +88,5 @@ doc: |
 
   *Usage:*
 
-  ```
-  # fetch CWL
-  $> dockstore tool cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
-  # make a runtime JSON template and edit it
-  $> dockstore tool convert cwl2json --cwl Dockstore.cwl > Dockstore.json
-  # run it locally with the Dockstore CLI
-  $> dockstore tool launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
-      --json Dockstore.json
-  ```
-  Also see this sample [Dockstore.json](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/delly_docker/Dockstore.json) with public URLs for sample data.
+  Use this sample [Dockstore.json](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/delly_docker/Dockstore.json) with public URLs for sample data.
 
