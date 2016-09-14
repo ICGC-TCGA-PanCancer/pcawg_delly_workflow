@@ -24,6 +24,7 @@ Email Brian if you have questions.  Joachim was the primary author.
 * Ivica Letunic (Dockerfile) <letunic@biobyte.de>
 * Brian O'Connor <briandoconnor@gmail.com>
 * Solomon Shorser <Solomon.Shorser@oicr.on.ca>
+* Denis Yuen <denis.yuen@oicr.on.ca>
 
 ## Building
 
@@ -64,12 +65,11 @@ You can use the Dockstore command line to simplify calling this workflow.  If yo
 *Usage:*
 
     # fetch CWL
-    $> dockstore tool cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 > Dockstore.cwl
+    $> dockstore tool cwl --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0-cwl1.0 > Dockstore.cwl
     # make a runtime JSON template and edit it
     $> dockstore tool convert cwl2json --cwl Dockstore.cwl > Dockstore.json
     # run it locally with the Dockstore CLI
-    $> dockstore tool launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0 \
-        --json Dockstore.json
+    $> dockstore tool launch --entry quay.io/pancancer/pcawg_delly_workflow:2.0.0-cwl1.0  --json Dockstore.json
 
 ## Tips
 
