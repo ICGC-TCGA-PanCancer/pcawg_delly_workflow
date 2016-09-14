@@ -9,6 +9,11 @@ dct:creator:
   '@id': http://orcid.org/0000-0002-7681-6415
   foaf:name: Brian O'Connor
   foaf:mbox: mailto:briandoconnor@gmail.com
+
+dct:contributor:
+  foaf:name: Denis Yuen
+  foaf:mbox: mailto:denis.yuen@oicr.on.ca
+  
 requirements:
 - class: DockerRequirement
   dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.0-cwl1.0
