@@ -59,11 +59,9 @@ GetOptions (
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
 
-# redefine environment variables
-os.environ['TMPDIR'] = "/tmp"
-os.environ['HOME'] = "/var/spool/cwl"
-run("env")
-run("whoami")
+# check our assumptions
+run("env");
+run("whoami");
 
 # PARSE OPTIONS
 
@@ -109,7 +107,7 @@ close OUT;
 
 # NOW RUN WORKFLOW
 # workaround for docker permissions 
-run("gosu root mkdir -p /var/spool/cwl/.seqware")
+run("gosu root mkdir -p /var/spool/cwl/.seqware");
 run("gosu root chown -R seqware /var/spool/cwl/");
 run("gosu root cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
 run("gosu root chmod a+wrx /var/spool/cwl/.seqware/settings");

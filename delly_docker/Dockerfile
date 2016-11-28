@@ -19,6 +19,23 @@ COPY scripts/* /usr/bin/
 RUN for i in cleanup.sh cov cov_plot.pl cov_v0.5.6_linux_x86_64bit cov_v0.5.6_parallel_linux_x86_64bit delly delly_pcawg_qc_json.py delly_pcawg_timing_json.py delly_pe_dump.sh delly_prepare_uploader.sh DellySomaticFreqFilter.py delly_v0.6.3_parallel_linux_x86_64bit delly_v0.6.6_parallel_linux_x86_64bit dellyVcf2Tsv.py vcfcombine vcf_index.sh vcf-sort; do chmod a+rx /usr/bin/$i; done;
 RUN echo 'install.packages("/usr/bin/DNAcopy_1.38.1.tar.gz")' >> /tmp/dnacopy; R CMD BATCH /tmp/dnacopy
 
+ENV GOSU_VERSION 1.10
+RUN set -x \
+    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
+    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
+    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
+    && export GNUPGHOME="$(mktemp -d)" \
+    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
+    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
+    && chmod +x /usr/local/bin/gosu \
+    && gosu nobody true \
+    && chown root:users /usr/local/bin/gosu \
+    && chmod +s /usr/local/bin/gosu
+ADD scripts/start.sh /start.sh
+RUN chmod a+rx /start.sh
+
 # copy over the workflow src contents
 COPY DELLY /home/seqware/DELLY
 RUN chown -R seqware /home/seqware/DELLY
@@ -39,26 +56,5 @@ RUN sed -i 's|OOZIE_RETRY_MAX=.*|OOZIE_RETRY_MAX=0|' /home/seqware/.seqware/sett
     echo 'WHITESTAR_MEMORY_LIMIT=160000' >> /home/seqware/.seqware/settings
 
 VOLUME /output /datastore /home/seqware
-
-ENV GOSU_VERSION 1.10
-RUN set -x \
-    && apt-get update && apt-get install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-    && dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true \
-    && chown root:users /usr/local/bin/gosu \
-    && chmod +s /usr/local/bin/gosu 
-
-ADD scripts/start.sh /start.sh
-
-RUN chmod a+rx /start.sh
-
-
 
 CMD ["/bin/bash"]
