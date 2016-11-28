@@ -59,9 +59,15 @@ GetOptions (
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
 
+# redefine environment variables
+os.environ['TMPDIR'] = "/tmp"
+os.environ['HOME'] = "/var/spool/cwl"
+run("env")
+run("whoami")
+
 # PARSE OPTIONS
 
-system("sudo chmod a+rwx /tmp");
+system("gosu root chmod a+rwx /tmp");
 
 # SYMLINK REF FILES
 run("mkdir -p /datastore/normal/");
@@ -103,9 +109,10 @@ close OUT;
 
 # NOW RUN WORKFLOW
 # workaround for docker permissions 
-run("sudo mkdir -p /var/spool/cwl/.seqware && sudo chown -R seqware /var/spool/cwl/");
-run("sudo cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
-run("sudo chmod a+wrx /var/spool/cwl/.seqware/settings");
+run("gosu root mkdir -p /var/spool/cwl/.seqware")
+run("gosu root sudo chown -R seqware /var/spool/cwl/");
+run("gosu root cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
+run("gosu root chmod a+wrx /var/spool/cwl/.seqware/settings");
 run("perl -pi -e 's/wrench.res/seqwaremaven/g' /home/seqware/bin/seqware");
 my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
@@ -114,7 +121,7 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("sudo mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
+system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
 
 # RETURN RESULT
 exit($error);

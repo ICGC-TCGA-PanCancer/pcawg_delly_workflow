@@ -16,7 +16,7 @@ dct:contributor:
   
 requirements:
 - class: DockerRequirement
-  dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.0-cwl1.0
+  dockerPull: quay.io/pancancer/pcawg_delly_workflow:feature_gosu_and_icgc_portal
 
 inputs:
   run-id:
@@ -81,7 +81,7 @@ outputs:
     type: File
     outputBinding:
       glob: '*.germline.sv.vcf.gz'
-baseCommand: [perl, /usr/bin/run_seqware_workflow.pl]
+baseCommand: [/start.sh, perl, /usr/bin/run_seqware_workflow.pl]
 doc: |
   ![pcawg logo](https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow/2.0.0/img/PCAWG-final-small.png "pcawg logo")
 
