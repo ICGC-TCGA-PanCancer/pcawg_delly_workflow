@@ -110,7 +110,7 @@ close OUT;
 # NOW RUN WORKFLOW
 # workaround for docker permissions 
 run("gosu root mkdir -p /var/spool/cwl/.seqware")
-run("gosu root sudo chown -R seqware /var/spool/cwl/");
+run("gosu root chown -R seqware /var/spool/cwl/");
 run("gosu root cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
 run("gosu root chmod a+wrx /var/spool/cwl/.seqware/settings");
 run("perl -pi -e 's/wrench.res/seqwaremaven/g' /home/seqware/bin/seqware");
