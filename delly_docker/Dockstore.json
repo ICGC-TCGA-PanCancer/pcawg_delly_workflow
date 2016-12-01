@@ -2,22 +2,22 @@
   "run-id": "run_id",
   "tumor-bam":
   {
-    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143.bam",
+    "path":"https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143.bam",
     "class":"File"
   },
   "normal-bam":
   {
-    "path":"https://s3.amazonaws.com/pan-cancer-data/pan-cancer-aligned-bam-samples/HCC1143_BL.bam",
+    "path":"https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143_BL.bam",
     "class":"File"
   },
   "reference-gz":
   {
-    "path": "http://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/genome.fa.gz",
+    "path": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/pcawg-bwa-mem/genome.fa.gz",
     "class": "File"
   },
   "reference-gc":
   {
-    "path": "https://s3.amazonaws.com/pan-cancer-data/pan-cancer-reference/hs37d5_1000GP.gc",
+    "path": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/pcawg-delly/hs37d5_1000GP.gc",
     "class": "File"
   },
   "somatic_sv_vcf":
