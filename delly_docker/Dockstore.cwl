@@ -16,7 +16,7 @@ dct:contributor:
   
 requirements:
 - class: DockerRequirement
-  dockerPull: quay.io/pancancer/pcawg_delly_workflow:feature_gosu_and_icgc_portal
+  dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.0.1-cwl1.0
 
 inputs:
   run-id:
