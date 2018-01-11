@@ -83,11 +83,11 @@ outputs:
       glob: '*.germline.sv.vcf.gz'
 baseCommand: [/start.sh, perl, /usr/bin/run_seqware_workflow.pl]
 doc: |
-  PCAWG EMBL variant calling workflow is developed by European Molecular Biology Laboratory at Heidelberg
-  (EMBL, https://www.embl.de), it consists of software components calling structural
-  variants using uniformly aligned tumor / normal WGS sequences. The workflow has been dockerized and packaged
-  using CWL workflow language, the source code is available on GitHub at:
-  https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow.
+    PCAWG EMBL variant calling workflow is developed by European Molecular Biology Laboratory at Heidelberg
+    (EMBL, https://www.embl.de), it consists of software components calling structural
+    variants using uniformly aligned tumor / normal WGS sequences. The workflow has been dockerized and packaged
+    using CWL workflow language, the source code is available on GitHub at:
+    https://github.com/ICGC-TCGA-PanCancer/pcawg_delly_workflow.
 
 
     ## Run the workflow with your own data
