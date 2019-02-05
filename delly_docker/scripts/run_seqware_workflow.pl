@@ -60,6 +60,8 @@ GetOptions (
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
 
+run("export HOME=$output_dir")
+
 # check our assumptions
 run("env");
 run("whoami");
