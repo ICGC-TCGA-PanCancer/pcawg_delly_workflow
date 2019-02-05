@@ -60,7 +60,7 @@ GetOptions (
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
 
-run("export HOME=$output_dir")
+$ENV{'HOME'} = $output_dir
 
 # check our assumptions
 run("env");
@@ -74,9 +74,9 @@ system("gosu root chmod a+rwx /tmp");
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
 run("ln -sf $normal_bam /datastore/normal/normal.bam");
-run("ln -sf ${normal_bam}.bai /data/datastore/normal/normal.bam.bai");
+run("ln -sf $normal_bam.bai /data/datastore/normal/normal.bam.bai");
 run("ln -sf $tumor_bam /datastore/tumor/tumor.bam");
-run("ln -sf ${tumor_bam}.bai /data/datastore/tumor/tumor.bam.bai");
+run("ln -sf $tumor_bam.bai /data/datastore/tumor/tumor.bam.bai");
 run("mkdir -p /datastore/data/");
 #run("ln -sf $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
@@ -110,10 +110,10 @@ close OUT;
 
 # NOW RUN WORKFLOW
 # workaround for docker permissions 
-run("gosu root mkdir -p ${output_dir}/.seqware");
-run("gosu root chown -R seqware ${output_dir}");
-run("gosu root cp /home/seqware/.seqware/settings ${output_dir}/.seqware");
-run("gosu root chmod a+wrx ${output_dir}/.seqware/settings");
+run("gosu root mkdir -p $output_dir/.seqware");
+run("gosu root chown -R seqware $output_dir");
+run("gosu root cp /home/seqware/.seqware/settings $output_dir/.seqware");
+run("gosu root chmod a+wrx $output_dir/.seqware/settings");
 run("perl -pi -e 's/wrench.res/seqwaremaven/g' /home/seqware/bin/seqware");
 my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
@@ -122,7 +122,7 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json ${output_dir}");
+system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $output_dir");
 
 # RETURN RESULT
 exit($error);
