@@ -34,11 +34,15 @@ inputs:
     inputBinding:
       position: 3
       prefix: --tumor-bam
+    secondaryFiles:
+    - .bai
   normal-bam:
     type: File
     inputBinding:
       position: 2
       prefix: --normal-bam
+    secondaryFiles:
+    - .bai
   reference-gz:
     type: File
     inputBinding:
