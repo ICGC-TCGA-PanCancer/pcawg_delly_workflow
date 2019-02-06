@@ -15,7 +15,7 @@ env
 OUTPUT_DIR=$HOME
 
 cd $OUTPUT_DIR
-gosu root bash -c "$* --output-dir $OUTPUT_DIR"
+gosu seqware bash -c "$* --output-dir $OUTPUT_DIR"
 
 # allow cwltool to pick up the results created by seqware
 gosu root chmod -R a+wrx $OUTPUT_DIR

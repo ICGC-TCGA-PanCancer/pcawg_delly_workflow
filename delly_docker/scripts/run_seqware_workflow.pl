@@ -60,7 +60,7 @@ GetOptions (
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
 
-$ENV{'HOME'} = $output_dir
+$ENV{'HOME'} = $output_dir;
 
 # check our assumptions
 run("env");
@@ -74,9 +74,9 @@ system("gosu root chmod a+rwx /tmp");
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
 run("ln -sf $normal_bam /datastore/normal/normal.bam");
-run("ln -sf $normal_bam.bai /data/datastore/normal/normal.bam.bai");
+run("ln -sf $normal_bam.bai /datastore/normal/normal.bam.bai");
 run("ln -sf $tumor_bam /datastore/tumor/tumor.bam");
-run("ln -sf $tumor_bam.bai /data/datastore/tumor/tumor.bam.bai");
+run("ln -sf $tumor_bam.bai /datastore/tumor/tumor.bam.bai");
 run("mkdir -p /datastore/data/");
 #run("ln -sf $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
