@@ -43,13 +43,14 @@ use Cwd;
 
 
 my @files;
-my ($run_id, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
+my ($output_dir, $run_id, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
 my $cwd = cwd();
 
 # workflow version
 my $wfversion = "2.0.0";
 
 GetOptions (
+  "output-dir=s"  => \$output_dir,
   "run-id=s"   => \$run_id,
   "normal-bam=s" => \$normal_bam,
   "tumor-bam=s" => \$tumor_bam,
@@ -58,6 +59,8 @@ GetOptions (
 )
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
+
+$ENV{'HOME'} = $output_dir;
 
 # check our assumptions
 run("env");
@@ -70,15 +73,15 @@ system("gosu root chmod a+rwx /tmp");
 # SYMLINK REF FILES
 run("mkdir -p /datastore/normal/");
 run("mkdir -p /datastore/tumor/");
-run("ln -s $normal_bam /datastore/normal/normal.bam");
-run("samtools index /datastore/normal/normal.bam");
-run("ln -s $tumor_bam /datastore/tumor/tumor.bam");
-run("samtools index /datastore/tumor/tumor.bam");
+run("ln -sf $normal_bam /datastore/normal/normal.bam");
+run("ln -sf $normal_bam.bai /datastore/normal/normal.bam.bai");
+run("ln -sf $tumor_bam /datastore/tumor/tumor.bam");
+run("ln -sf $tumor_bam.bai /datastore/tumor/tumor.bam.bai");
 run("mkdir -p /datastore/data/");
-#run("ln -s $reference_gz /datastore/data/genome.fa.gz");
+#run("ln -sf $reference_gz /datastore/data/genome.fa.gz");
 #run("gunzip /datastore/data/genome.fa.gz");
 system("gunzip -c $reference_gz > /datastore/data/hg19_1_22XYMT.fa");
-run("ln -s $reference_gc /datastore/data/hg19_1_22XYMT.gc");
+run("ln -sf $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 
 # MAKE CONFIG
 # the default config is the workflow_local.ini and has most configs ready to go
@@ -107,10 +110,10 @@ close OUT;
 
 # NOW RUN WORKFLOW
 # workaround for docker permissions 
-run("gosu root mkdir -p /var/spool/cwl/.seqware");
-run("gosu root chown -R seqware /var/spool/cwl/");
-run("gosu root cp /home/seqware/.seqware/settings /var/spool/cwl/.seqware");
-run("gosu root chmod a+wrx /var/spool/cwl/.seqware/settings");
+run("gosu root mkdir -p $output_dir/.seqware");
+run("gosu root chown -R seqware $output_dir");
+run("gosu root cp /home/seqware/.seqware/settings $output_dir/.seqware");
+run("gosu root chmod a+wrx $output_dir/.seqware/settings");
 run("perl -pi -e 's/wrench.res/seqwaremaven/g' /home/seqware/bin/seqware");
 my $error = system("seqware bundle launch --dir /home/seqware/DELLY/target/Workflow_Bundle_DELLY_".$wfversion."_SeqWare_1.1.1  --engine whitestar --ini /datastore/workflow.ini --no-metadata");
 
@@ -119,7 +122,7 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $cwd");
+system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $output_dir");
 
 # RETURN RESULT
 exit($error);
