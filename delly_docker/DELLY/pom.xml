@@ -253,34 +253,6 @@
                     </filesets>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.pyx4j</groupId>
-                <artifactId>maven-junction-plugin</artifactId>
-                <version>1.0.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>link</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>unlink</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>unlink</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <links>
-                        <link>
-                            <dst>${workflow-dir}/data</dst>
-                            <src>${basedir}/links</src>
-                        </link>
-                    </links>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
