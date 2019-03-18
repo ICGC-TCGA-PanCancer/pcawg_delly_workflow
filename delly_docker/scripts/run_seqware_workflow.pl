@@ -122,7 +122,8 @@ my $path = `ls -1t /datastore/ | grep 'oozie-' | head -1`;
 chomp $path;
 
 # MOVE THESE TO THE RIGHT PLACE
-system("gosu root mv /datastore/$path/*.vcf.gz /datastore/$path/*.bedpe.txt /datastore/$path/delly_results/*.sv.cov.tar.gz /datastore/$path/delly_results/*.sv.cov.plots.tar.gz /datastore/$path/*.sv.log.tar.gz /datastore/$path/*.json $output_dir");
+system("gosu root mv /datastore/$path/*.vcf.gz* /datastore/$path/*.bedpe.txt* /datastore/$path/delly_results/*.sv.cov.tar.gz* /datastore/$path/delly_results/*.sv.cov.plots.tar.gz* /datastore/$path/*.sv.log.tar.gz* /datastore/$path/*.json /datastore/$path/*.sv.readname.txt.tar.gz* $output_dir");
+
 
 # RETURN RESULT
 exit($error);

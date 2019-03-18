@@ -48,31 +48,50 @@ inputs:
     inputBinding:
       position: 4
       prefix: --reference-gz
+
 outputs:
   somatic_sv_vcf:
     type: File
     outputBinding:
       glob: '*.somatic.sv.vcf.gz'
+    secondaryFiles:
+    - .md5
+    - .tbi
+    - .tbi.md5
   cov_plots:
     type: File
     outputBinding:
       glob: '*.sv.cov.plots.tar.gz'
+    secondaryFiles:
+    - .md5
   cov:
     type: File
     outputBinding:
       glob: '*.sv.cov.tar.gz'
+    secondaryFiles:
+    - .md5
   somatic_bedpe:
     type: File
     outputBinding:
       glob: '*.somatic.sv.bedpe.txt'
+    secondaryFiles:
+    - .md5
+    - .tar.gz
+    - .tar.gz.md5
   germline_bedpe:
     type: File
     outputBinding:
       glob: '*.germline.sv.bedpe.txt'
+    secondaryFiles:
+    - .md5
+    - .tar.gz
+    - .tar.gz.md5
   sv_log:
     type: File
     outputBinding:
       glob: '*.sv.log.tar.gz'
+    secondaryFiles:
+    - .md5
   sv_timing:
     type: File
     outputBinding:
@@ -85,6 +104,31 @@ outputs:
     type: File
     outputBinding:
       glob: '*.germline.sv.vcf.gz'
+    secondaryFiles:
+    - .md5
+    - .tbi
+    - .tbi.md5
+  sv_vcf:
+    type: File
+    outputBinding:
+      glob: '*[0-9].sv.vcf.gz'
+    secondaryFiles:
+    - .md5
+    - .tbi
+    - .tbi.md5
+  somatic_sv_readname:
+    type: File
+    outputBinding:
+      glob: '*.somatic.sv.readname.txt.tar.gz'
+    secondaryFiles:
+    - .md5
+  germline_sv_readname:
+    type: File
+    outputBinding:
+      glob: '*.germline.sv.readname.txt.tar.gz'
+    secondaryFiles:
+    - .md5
+
 baseCommand: [/start.sh, perl, /usr/bin/run_seqware_workflow.pl]
 doc: |
     PCAWG EMBL variant calling workflow is developed by European Molecular Biology Laboratory at Heidelberg
