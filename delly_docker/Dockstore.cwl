@@ -58,48 +58,6 @@ outputs:
     - .md5
     - .tbi
     - .tbi.md5
-  cov_plots:
-    type: File
-    outputBinding:
-      glob: '*.sv.cov.plots.tar.gz'
-    secondaryFiles:
-    - .md5
-  cov:
-    type: File
-    outputBinding:
-      glob: '*.sv.cov.tar.gz'
-    secondaryFiles:
-    - .md5
-  somatic_bedpe:
-    type: File
-    outputBinding:
-      glob: '*.somatic.sv.bedpe.txt'
-    secondaryFiles:
-    - .md5
-    - .tar.gz
-    - .tar.gz.md5
-  germline_bedpe:
-    type: File
-    outputBinding:
-      glob: '*.germline.sv.bedpe.txt'
-    secondaryFiles:
-    - .md5
-    - .tar.gz
-    - .tar.gz.md5
-  sv_log:
-    type: File
-    outputBinding:
-      glob: '*.sv.log.tar.gz'
-    secondaryFiles:
-    - .md5
-  sv_timing:
-    type: File
-    outputBinding:
-      glob: '*.sv.timing.json'
-  sv_qc:
-    type: File
-    outputBinding:
-      glob: '*.sv.qc.json'
   germline_sv_vcf:
     type: File
     outputBinding:
@@ -116,6 +74,30 @@ outputs:
     - .md5
     - .tbi
     - .tbi.md5
+  somatic_bedpe:
+    type: File
+    outputBinding:
+      glob: '*.somatic.sv.bedpe.txt'
+    secondaryFiles:
+    - .md5
+  somatic_bedpe_tar_gz:
+    type: File
+    outputBinding:
+      glob: '*.somatic.sv.bedpe.txt.tar.gz'
+    secondaryFiles:
+    - .md5
+  germline_bedpe:
+    type: File
+    outputBinding:
+      glob: '*.germline.sv.bedpe.txt'
+    secondaryFiles:
+    - .md5
+  germline_bedpe_tar_gz:
+    type: File
+    outputBinding:
+      glob: '*.germline.sv.bedpe.txt.tar.gz'
+    secondaryFiles:
+    - .md5
   somatic_sv_readname:
     type: File
     outputBinding:
@@ -126,6 +108,36 @@ outputs:
     type: File
     outputBinding:
       glob: '*.germline.sv.readname.txt.tar.gz'
+    secondaryFiles:
+    - .md5
+  cov:
+    type: File
+    outputBinding:
+      glob: '*.sv.cov.tar.gz'
+    secondaryFiles:
+    - .md5
+  cov_plots:
+    type: File
+    outputBinding:
+      glob: '*.sv.cov.plots.tar.gz'
+    secondaryFiles:
+    - .md5
+  sv_log:
+    type: File
+    outputBinding:
+      glob: '*.sv.log.tar.gz'
+    secondaryFiles:
+    - .md5
+  sv_qc:
+    type: File
+    outputBinding:
+      glob: 'sv.qc_metrics.tar.gz'
+    secondaryFiles:
+    - .md5
+  sv_timing:
+    type: File
+    outputBinding:
+      glob: 'sv.timing_metrics.tar.gz'
     secondaryFiles:
     - .md5
 
