@@ -131,13 +131,13 @@ outputs:
   sv_qc:
     type: File
     outputBinding:
-      glob: 'sv.qc_metrics.tar.gz'
+      glob: '*.sv.qc_metrics.tar.gz'
     secondaryFiles:
     - .md5
   sv_timing:
     type: File
     outputBinding:
-      glob: 'sv.timing_metrics.tar.gz'
+      glob: '*.sv.timing_metrics.tar.gz'
     secondaryFiles:
     - .md5
 
