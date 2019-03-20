@@ -124,10 +124,10 @@ chomp $path;
 # MOVE THESE TO THE RIGHT PLACE
 system("gosu root mv /datastore/$path/*.vcf.gz* /datastore/$path/*.bedpe.txt* /datastore/$path/delly_results/*.sv.cov.tar.gz* /datastore/$path/delly_results/*.sv.cov.plots.tar.gz* /datastore/$path/*.sv.log.tar.gz* /datastore/$path/*.json /datastore/$path/*.sv.readname.txt.tar.gz* $output_dir");
 # tar gzip the timing_metrics.json and qc_metrics.json
-system("gosu root tar -zcvf $output_dir/sv.timing_metrics.tar.gz -C $output_dir *.sv.timing.json")
-system("gosu root cat $output_dir/sv.timing_metrics.tar.gz | md5sum | cut -b 1-33 > $output_dir/sv.timing_metrics.tar.gz.md5")
-system("gosu root tar -zcvf $output_dir/sv.qc_metrics.tar.gz -C $output_dir *.sv.qc.json")
-system("gosu root cat $output_dir/sv.qc_metrics.tar.gz | md5sum | cut -b 1-33 > $output_dir/sv.qc_metrics.tar.gz.md5")
+system("gosu root tar -zcvf $output_dir/sv.timing_metrics.tar.gz -C $output_dir *.sv.timing.json");
+system("gosu root cat $output_dir/sv.timing_metrics.tar.gz | md5sum | cut -b 1-33 > $output_dir/sv.timing_metrics.tar.gz.md5");
+system("gosu root tar -zcvf $output_dir/sv.qc_metrics.tar.gz -C $output_dir *.sv.qc.json");
+system("gosu root cat $output_dir/sv.qc_metrics.tar.gz | md5sum | cut -b 1-33 > $output_dir/sv.qc_metrics.tar.gz.md5");
 
 # RETURN RESULT
 exit($error);
