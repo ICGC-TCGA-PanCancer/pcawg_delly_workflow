@@ -3,6 +3,8 @@
 use strict;
 use Getopt::Long;
 use Cwd;
+use Time::Piece;
+
 
 ########
 # ABOUT
@@ -45,6 +47,7 @@ use Cwd;
 my @files;
 my ($output_dir, $run_id, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
 my $cwd = cwd();
+my $date = localtime->strftime('%Y%m%d');
 
 # workflow version
 my $wfversion = "2.0.0";
@@ -88,6 +91,7 @@ run("ln -sf $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 my $config = "
 # # key=datastore:type=text:display=T:display_name=ID for the current run, will be used to create filenames
 delly_runID=$run_id
+date=$date
 
 # # key=input_bam_path_tumor:type=text:display=T:display_name=The relative tumor BAM path, directory name only
 input_bam_path_tumor=tumor
