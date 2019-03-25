@@ -4,7 +4,7 @@ use strict;
 use Getopt::Long;
 use Cwd;
 use Time::Piece;
-use Bio::DB::Sam;
+use Capture::Tiny qw(capture);
 
 
 ########
@@ -46,17 +46,16 @@ use Bio::DB::Sam;
 
 
 my @files;
-my ($output_dir, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
+my ($output_dir, $normal_bam, $tumor_bam, $reference_gz, $reference_gc, $run_id);
 my $cwd = cwd();
 my $date = localtime->strftime('%Y%m%d');
-my $run_id = sample_name($tumor_bam);
 
 # workflow version
 my $wfversion = "2.0.0";
 
 GetOptions (
   "output-dir=s"  => \$output_dir,
-  "run-id=s"   => \$run_id,
+  "run-id:s"   => \$run_id,
   "normal-bam=s" => \$normal_bam,
   "tumor-bam=s" => \$tumor_bam,
   "reference-gz=s" => \$reference_gz,
@@ -64,6 +63,11 @@ GetOptions (
 )
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
+
+if ($run_id eq "")
+{
+  $run_id = get_aliquot_id_from_bam($tumor_bam)
+}
 
 $ENV{'HOME'} = $output_dir;
 
@@ -149,16 +153,30 @@ sub run {
 }
 
 
-sub sample_name {
-  my $control_bam = shift;
-  my @lines = split /\n/, Bio::DB::Sam->new(-bam => $control_bam)->header->text;
-  my $sample;
-  for(@lines) {
-    if($_ =~ m/^\@RG.*\tSM:([^\t]+)/) {
-      $sample = $1;
-      last;
+sub get_aliquot_id_from_bam {
+  my $bam = shift;
+  die "BAM file does not exist: $bam" unless ( -e $bam );
+
+  my $command = sprintf q{samtools view -H %s | grep '^@RG'}, $bam;
+  my ($stdout, $stderr, $exit) = capture { system($command); };
+  die "STDOUT: $stdout\n\nSTDERR: $stderr\n" if ( $exit != 0 );
+
+  my %names;
+  for ( split "\n", $stdout ) {
+    chomp $_;
+    if ( $_ =~ m/\tSM:([^\t]+)/ ) {
+      $names{$1} = 1;
+    }
+    else {
+      die "Found RG line with no SM field: $_\n\tfrom: $bam\n";
     }
   }
-  die "Failed to determine sample from BAM header\n" unless(defined $sample);
-  return $sample;
-}
+
+  my @keys = keys %names;
+  die "Multiple different SM entries: ."
+    . join( q{,}, @keys )
+    . "\n\tfrom: $bam\n"
+    if ( scalar @keys > 1 );
+  die "No SM entry found in: $bam\n" if ( scalar @keys == 0 );
+  return $keys[0];
+
