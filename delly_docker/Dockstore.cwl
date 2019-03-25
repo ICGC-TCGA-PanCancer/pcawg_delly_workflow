@@ -20,33 +20,33 @@ requirements:
 
 inputs:
   run-id:
-    type: string
+    type: string?
     inputBinding:
-      position: 1
+      position: 5
       prefix: --run-id
   reference-gc:
     type: File
     inputBinding:
-      position: 5
+      position: 4
       prefix: --reference-gc
   tumor-bam:
     type: File
     inputBinding:
-      position: 3
+      position: 2
       prefix: --tumor-bam
     secondaryFiles:
     - .bai
   normal-bam:
     type: File
     inputBinding:
-      position: 2
+      position: 1
       prefix: --normal-bam
     secondaryFiles:
     - .bai
   reference-gz:
     type: File
     inputBinding:
-      position: 4
+      position: 3
       prefix: --reference-gz
 
 outputs:

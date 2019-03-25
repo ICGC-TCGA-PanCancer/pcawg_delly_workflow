@@ -4,6 +4,7 @@ use strict;
 use Getopt::Long;
 use Cwd;
 use Time::Piece;
+use Bio::DB::Sam;
 
 
 ########
@@ -45,9 +46,10 @@ use Time::Piece;
 
 
 my @files;
-my ($output_dir, $run_id, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
+my ($output_dir, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
 my $cwd = cwd();
 my $date = localtime->strftime('%Y%m%d');
+my $run_id = sample_name($tumor_bam);
 
 # workflow version
 my $wfversion = "2.0.0";
@@ -144,4 +146,19 @@ sub run {
   print "EXECUTING CMD: $cmd\n";
   my $error = system($cmd);
   if ($error) { exit($error); }
+}
+
+
+sub sample_name {
+  my $control_bam = shift;
+  my @lines = split /\n/, Bio::DB::Sam->new(-bam => $control_bam)->header->text;
+  my $sample;
+  for(@lines) {
+    if($_ =~ m/^\@RG.*\tSM:([^\t]+)/) {
+      $sample = $1;
+      last;
+    }
+  }
+  die "Failed to determine sample from BAM header\n" unless(defined $sample);
+  return $sample;
 }
