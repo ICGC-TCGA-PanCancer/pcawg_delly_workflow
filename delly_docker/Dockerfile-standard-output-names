@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y \
     cpanminus \
     && rm -rf /var/lib/apt/lists/*
 
-RUN cpanm Capture::Tiny
+RUN cpanm --no-lwp Capture::Tiny
 
 COPY scripts/run_seqware_workflow.pl /usr/bin/
 
