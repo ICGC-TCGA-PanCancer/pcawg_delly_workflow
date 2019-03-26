@@ -179,4 +179,5 @@ sub get_aliquot_id_from_bam {
     if ( scalar @keys > 1 );
   die "No SM entry found in: $bam\n" if ( scalar @keys == 0 );
   return $keys[0];
+}
 
