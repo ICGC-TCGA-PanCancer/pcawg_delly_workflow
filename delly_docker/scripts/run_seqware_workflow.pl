@@ -160,6 +160,7 @@ sub run {
 
 
 sub get_aliquot_id_from_bam {
+  # we don't really need to get the exact SM, we just use it as run-id if user did not provide one
   my $bam = shift;
   die "BAM file does not exist: $bam" unless ( -e $bam );
 
@@ -171,7 +172,9 @@ sub get_aliquot_id_from_bam {
   for ( split "\n", $stdout ) {
     chomp $_;
     if ( $_ =~ m/\tSM:([^\t]+)/ ) {
-      $names{$1} = 1;
+      $sm = $1;
+      $sm =~ s/[^\w^\-^_]/_/g;  # convert non-filename-friendly characters to underscores
+      $names{$sm} = 1;
     }
     else {
       die "Found RG line with no SM field: $_\n\tfrom: $bam\n";
