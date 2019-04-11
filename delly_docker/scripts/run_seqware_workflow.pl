@@ -69,11 +69,8 @@ if ($run_id eq "")
   $run_id = get_aliquot_id_from_bam($tumor_bam);
 }
 
-if ($run_id =~ /^[a-zA-Z0-9_-]+$/) {
-    print "run-id is: $run_id\n";
-} else {
-    die "Found run-id contains invalid character: $run_id\n";
-}
+$run_id =~ s/[^\w^\-^_]/_/g;  # convert non-filename-friendly characters to underscores
+print "run-id is: $run_id\n";
 
 $ENV{'HOME'} = $output_dir;
 
@@ -172,9 +169,7 @@ sub get_aliquot_id_from_bam {
   for ( split "\n", $stdout ) {
     chomp $_;
     if ( $_ =~ m/\tSM:([^\t]+)/ ) {
-      my $sm = $1;
-      $sm =~ s/[^\w^\-^_]/_/g;  # convert non-filename-friendly characters to underscores
-      $names{$sm} = 1;
+      $names{$1} = 1;
     }
     else {
       die "Found RG line with no SM field: $_\n\tfrom: $bam\n";
