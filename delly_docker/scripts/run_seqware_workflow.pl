@@ -3,6 +3,9 @@
 use strict;
 use Getopt::Long;
 use Cwd;
+use Time::Piece;
+use Capture::Tiny qw(capture);
+
 
 ########
 # ABOUT
@@ -43,15 +46,16 @@ use Cwd;
 
 
 my @files;
-my ($output_dir, $run_id, $normal_bam, $tumor_bam, $reference_gz, $reference_gc);
+my ($output_dir, $normal_bam, $tumor_bam, $reference_gz, $reference_gc, $run_id);
 my $cwd = cwd();
+my $date = localtime->strftime('%Y%m%d');
 
 # workflow version
 my $wfversion = "2.0.0";
 
 GetOptions (
   "output-dir=s"  => \$output_dir,
-  "run-id=s"   => \$run_id,
+  "run-id:s"   => \$run_id,
   "normal-bam=s" => \$normal_bam,
   "tumor-bam=s" => \$tumor_bam,
   "reference-gz=s" => \$reference_gz,
@@ -59,6 +63,17 @@ GetOptions (
 )
 # TODO: need to add all the new params, then symlink the ref files to the right place
  or die("Error in command line arguments\n");
+
+if ($run_id eq "")
+{
+  $run_id = get_run_id_from_sm_in_bam($tumor_bam);
+}
+
+if ($run_id =~ /^[a-zA-Z0-9_-]+$/) {
+    print "run-id is: $run_id\n";
+} else {
+    die "Found run-id contains invalid character: $run_id\n";
+}
 
 $ENV{'HOME'} = $output_dir;
 
@@ -88,6 +103,7 @@ run("ln -sf $reference_gc /datastore/data/hg19_1_22XYMT.gc");
 my $config = "
 # # key=datastore:type=text:display=T:display_name=ID for the current run, will be used to create filenames
 delly_runID=$run_id
+date=$date
 
 # # key=input_bam_path_tumor:type=text:display=T:display_name=The relative tumor BAM path, directory name only
 input_bam_path_tumor=tumor
@@ -141,3 +157,36 @@ sub run {
   my $error = system($cmd);
   if ($error) { exit($error); }
 }
+
+
+sub get_run_id_from_sm_in_bam {
+  # we don't really need to get the exact SM, we just use it as run-id if user did not provide one
+  my $bam = shift;
+  die "BAM file does not exist: $bam" unless ( -e $bam );
+
+  my $command = sprintf q{samtools view -H %s | grep '^@RG'}, $bam;
+  my ($stdout, $stderr, $exit) = capture { system($command); };
+  die "STDOUT: $stdout\n\nSTDERR: $stderr\n" if ( $exit != 0 );
+
+  my %names;
+  for ( split "\n", $stdout ) {
+    chomp $_;
+    if ( $_ =~ m/\tSM:([^\t]+)/ ) {
+      my $sm = $1;
+      $sm =~ s/[^\w^\-^_]/_/g;  # convert non-filename-friendly characters to underscores
+      $names{$sm} = 1;
+    }
+    else {
+      die "Found RG line with no SM field: $_\n\tfrom: $bam\n";
+    }
+  }
+
+  my @keys = keys %names;
+  die "Multiple different SM entries: ."
+    . join( q{,}, @keys )
+    . "\n\tfrom: $bam\n"
+    if ( scalar @keys > 1 );
+  die "No SM entry found in: $bam\n" if ( scalar @keys == 0 );
+  return $keys[0];
+}
+

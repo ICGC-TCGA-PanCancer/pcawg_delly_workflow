@@ -1,1 +1,1 @@
-Dockerfile-2.0.4
+Dockerfile-standard-output-names
