@@ -66,7 +66,7 @@ GetOptions (
 
 if ($run_id eq "")
 {
-  $run_id = get_aliquot_id_from_bam($tumor_bam);
+  $run_id = get_run_id_from_sm_in_bam($tumor_bam);
 }
 
 if ($run_id =~ /^[a-zA-Z0-9_-]+$/) {
@@ -159,7 +159,7 @@ sub run {
 }
 
 
-sub get_aliquot_id_from_bam {
+sub get_run_id_from_sm_in_bam {
   # we don't really need to get the exact SM, we just use it as run-id if user did not provide one
   my $bam = shift;
   die "BAM file does not exist: $bam" unless ( -e $bam );
