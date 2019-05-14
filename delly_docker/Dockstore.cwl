@@ -16,7 +16,7 @@ dct:contributor:
 
 requirements:
 - class: DockerRequirement
-  dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.1.0
+  dockerPull: quay.io/pancancer/pcawg_delly_workflow:2.2.0
 
 inputs:
   run-id:
