@@ -1,5 +1,5 @@
 sudo: false
 language: java
 jdk:
-  - oraclejdk8
+  - oraclejdk13
 script: cd full_workflow &&  mvn -B clean install

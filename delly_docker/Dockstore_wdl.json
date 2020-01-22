@@ -1,0 +1,9 @@
+{
+  "Seqware_Delly_Workflow.normalBam": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143_BL.bam",
+  "Seqware_Delly_Workflow.normalBamIndex": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143_BL.bam.bai",
+  "Seqware_Delly_Workflow.tumorBam": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143.bam",
+  "Seqware_Delly_Workflow.tumorBamIndex": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/data_for_testing/HCC1143_ds/HCC1143.bam.bai",
+  "Seqware_Delly_Workflow.reference_gc": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/pcawg-delly/hs37d5_1000GP.gc",
+  "Seqware_Delly_Workflow.reference_gz": "https://dcc.icgc.org/api/v1/download?fn=/PCAWG/reference_data/pcawg-bwa-mem/genome.fa.gz",
+  "Seqware_Delly_Workflow.run_id": "run_id"
+}
